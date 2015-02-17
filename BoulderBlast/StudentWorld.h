@@ -4,8 +4,12 @@
 #include "GameWorld.h"
 #include "GameConstants.h"
 #include <string>
+#include <list>
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
+
+class Actor;
+class Player;
 
 class StudentWorld : public GameWorld
 {
@@ -14,7 +18,9 @@ public:
 	 : GameWorld(assetDir)
 	{
 	}
-
+    
+    virtual ~StudentWorld() {}    //  need to work on this
+    
 	virtual int init()
 	{
 		return GWSTATUS_CONTINUE_GAME;
@@ -30,8 +36,11 @@ public:
 	virtual void cleanUp()
 	{
 	}
+    
 
 private:
+    std::list<Actor*> m_Actors;
+    Player* m_Player;
 };
 
 #endif // STUDENTWORLD_H_
