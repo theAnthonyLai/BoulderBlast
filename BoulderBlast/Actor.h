@@ -27,16 +27,15 @@ public:
     {
         
     }
+    virtual ~Actor() {};
     
     //  Accessors
-    bool isDead() const;
+    bool isDead() const { return m_dead; };
+    StudentWorld* getWorld() const { return m_StudentWorld; };
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
     void setDead();
-    
-    
-    StudentWorld getWorld() const;
     
 private:
     StudentWorld* m_StudentWorld;
@@ -47,6 +46,7 @@ private:
 class Character : public Actor
 {
 public:
+    //  Constructor
     Character(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth, int startAmmo, Direction startDirection = none)
     : Actor(imageID, startX, startY, myWorld, startDirection),
         m_health(startHealth),
@@ -55,16 +55,18 @@ public:
         
     }
     
+    virtual ~Character() {};
+    
     //  Accessors
-    int getHealth() { return m_health; }
-    int getAmmo() { return m_ammo; }
+    int getHealth() const { return m_health; }
+    int getAmmo() const { return m_ammo; }
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
     void incHealth();   //  TO_FIX may change return type
     void decHealth();   //  TO_FIX may change return type
     void decAmmo();
-    
+    virtual void attacked() = 0;    //  TO_FIX to be changed??
     
 private:
     int m_health;
@@ -89,6 +91,31 @@ public:
 private:
 
 
+};
+
+
+class Wall : public Actor
+{
+public:
+    //  Constructor
+    Wall(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Actor(imageID, startX, startY, myWorld, none)
+    {
+        setVisible(true);
+    }
+    
+    virtual ~Wall() {
+        //  TO_FIX write delete here?
+        //  don't think so...
+    }
+    
+    virtual void doSomething() {
+        //  Walls don't do anything
+        return;
+    }
+    
+private:
+    
 };
 
 
