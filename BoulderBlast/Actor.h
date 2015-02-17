@@ -35,7 +35,9 @@ public:
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
-    void setDead();
+    void setDead() {
+        m_dead = true;
+    };
     
 private:
     StudentWorld* m_StudentWorld;
@@ -65,7 +67,10 @@ public:
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
     void incHealth();   //  TO_FIX may change return type
     void decHealth();   //  TO_FIX may change return type
-    void decAmmo();
+    void incAmmo(int nToAdd);
+    void decAmmo() {
+        m_ammo--;
+    };
     virtual void attacked() = 0;    //  TO_FIX to be changed??
     
 private:
