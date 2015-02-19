@@ -71,7 +71,10 @@ public:
     void decAmmo() {
         m_ammo--;
     };
-    //virtual void attacked() = 0;    //  TO_FIX to be changed??
+    //  virtual void attacked() = 0;    //  TO_FIX to be changed??
+protected:
+    virtual bool canMoveHere(int attemptX, int attemptY);
+    //  virtual bool canPushBoulder(int attemptX, int attemptY) = 0;    //  TO_FIX
     
 private:
     int m_health;

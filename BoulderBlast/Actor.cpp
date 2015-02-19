@@ -3,7 +3,10 @@
 
 // Students:  Add code to this file (if you wish), Actor.h, StudentWorld.h, and StudentWorld.cpp
 
-
+bool Character::canMoveHere(int attemptX, int attemptY) {
+    //  TO_FIX
+    return true;
+}
 
 void Player::doSomething() {
     //  1
@@ -14,6 +17,10 @@ void Player::doSomething() {
     int keyPressed;
     if (getWorld()->getKey(keyPressed)) {
         //  user hit a key during this tick
+       
+        int attemptX;
+        int attemptY;
+        
         switch (keyPressed) {
             case KEY_PRESS_ESCAPE:
                 //  set the player to dead
@@ -27,21 +34,43 @@ void Player::doSomething() {
                 setDirection(up);
                 //  TO_FIX
                 //  moveTo()
+                attemptX = getX();
+                attemptY = getY() + 1;
+                if (canMoveHere(attemptX, attemptY))
+                    moveTo(attemptX, attemptY);
                 break;
             case KEY_PRESS_DOWN:
                 setDirection(down);
                 //  TO_FIX
                 //  moveTo()
+                //  moveTo()
+                attemptX = getX();
+                attemptY = getY() - 1;
+                if (canMoveHere(attemptX, attemptY))
+                    moveTo(attemptX, attemptY);
+
                 break;
             case KEY_PRESS_LEFT:
                 setDirection(left);
                 //  TO_FIX
                 //  moveTo()
+                //  moveTo()
+                attemptX = getX() - 1;
+                attemptY = getY();
+                if (canMoveHere(attemptX, attemptY))
+                    moveTo(attemptX, attemptY);
+
                 break;
             case KEY_PRESS_RIGHT:
                 setDirection(right);
                 //  TO_FIX
                 //  moveTo()
+                //  moveTo()
+                attemptX = getX() + 1;
+                attemptY = getY();
+                if (canMoveHere(attemptX, attemptY))
+                    moveTo(attemptX, attemptY);
+
                 break;
         }
     }
