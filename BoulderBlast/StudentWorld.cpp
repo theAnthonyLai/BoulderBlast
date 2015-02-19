@@ -40,8 +40,16 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-		  // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
+    // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
     //decLives();
+    
+    m_Player->doSomething();
+    if (m_Player->isDead())
+        return GWSTATUS_PLAYER_DIED;
+    //  TO_FIX
+    //  FINISH LEVEL
+    
+    
     return GWSTATUS_CONTINUE_GAME;
 }
 
