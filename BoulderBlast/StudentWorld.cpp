@@ -2,6 +2,8 @@
 #include "Actor.h"
 #include "Level.h"
 #include <string>
+#include <sstream>
+#include <iomanip>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)
@@ -47,10 +49,14 @@ int StudentWorld::move()
     //  Update the Game Status Line
     //  updateDisplayText(); // update the score/lives/level text at screen top
     
+    displayGameText();
+    
     
     m_Player->doSomething();
-    if (m_Player->isDead())
+    if (m_Player->isDead()) {
+        decLives();
         return GWSTATUS_PLAYER_DIED;
+    }
     //  TO_FIX
     //  FINISH LEVEL
     
@@ -59,8 +65,10 @@ int StudentWorld::move()
     for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if (!(*it)->isDead()) {     //  if the Actor is not dead
             (*it)->doSomething();
-            if (m_Player->isDead())
+            if (m_Player->isDead()) {
+                decLives();
                 return GWSTATUS_PLAYER_DIED;
+            }
         }
     }
     
@@ -133,6 +141,44 @@ void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
                 break;
         }
     }
+}
+
+void StudentWorld::displayGameText()
+{
+    
+    int score = getScore();
+    int level = getLevel();
+    int livesLeft = getLives();
+    int healthLeft = (m_Player->getHealth()) / 20 * 100;    //  TO_FIX ??
+    int ammoLeft = m_Player->getAmmo();
+    int bonusLeft = m_Bonus;
+    
+    //  Format text
+    ostringstream formattedText;
+    
+    formattedText << "Score: ";
+    formattedText.fill('0');
+    formattedText << setw(7) << score << "  ";
+    
+    formattedText << "Level: ";
+    formattedText << setw(2) << level << "  ";
+    
+    formattedText << "Lives: ";
+    formattedText.fill(' ');
+    formattedText << setw(2) << livesLeft << "  ";
+    
+    formattedText << "Health: ";
+    formattedText << setw(3) << healthLeft << "%  ";
+    
+    formattedText << "Ammo: ";
+    formattedText << setw(3) << ammoLeft << "  ";
+    
+    formattedText << "Bonus: ";
+    formattedText << setw(4) << bonusLeft;
+    
+    string textToDisplay = formattedText.str();
+    setGameStatText(textToDisplay);
+    
 }
 
 

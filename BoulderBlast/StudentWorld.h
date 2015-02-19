@@ -33,6 +33,7 @@ public:
 private:
     //  private member functions
     void loadLevel(int& imageID, int startX, int startY);
+    void displayGameText();
     
     //  data members
     std::list<Actor*> m_Actors;
