@@ -15,7 +15,7 @@ class StudentWorld : public GameWorld
 {
 public:
 	StudentWorld(std::string assetDir)
-	 : GameWorld(assetDir), m_Bonus(1000)
+	 : GameWorld(assetDir)
 	{
 	}
     

@@ -13,6 +13,8 @@ GameWorld* createStudentWorld(string assetDir)
 
 int StudentWorld::init()
 {
+    m_Bonus = 1000;
+    
     for (int x = 0; x < VIEW_WIDTH; x++) {
         for (int y = 0; y < VIEW_HEIGHT; y++) {
             int imageID;
