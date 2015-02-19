@@ -71,7 +71,7 @@ public:
     void decAmmo() {
         m_ammo--;
     };
-    virtual void attacked() = 0;    //  TO_FIX to be changed??
+    //virtual void attacked() = 0;    //  TO_FIX to be changed??
     
 private:
     int m_health;

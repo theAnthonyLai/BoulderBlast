@@ -21,17 +21,9 @@ public:
     
     virtual ~StudentWorld() {}    //  need to work on this
     
-	virtual int init()
-	{
-		return GWSTATUS_CONTINUE_GAME;
-	}
+    virtual int init();
 
-	virtual int move()
-	{
-		  // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times 
-		decLives();
-		return GWSTATUS_PLAYER_DIED;
-	}
+    virtual int move();
 
 	virtual void cleanUp()
 	{
@@ -39,6 +31,10 @@ public:
     
 
 private:
+    //  private member functions
+    void loadLevel(int& imageID, int startX, int startY);
+    
+    //  data members
     std::list<Actor*> m_Actors;
     Player* m_Player;
 };
