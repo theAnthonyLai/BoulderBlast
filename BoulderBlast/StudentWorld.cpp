@@ -40,14 +40,50 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-    // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
-    //decLives();
+    //  TO_FIX
+    //  add #5 here
+    //  Update the Game Status Line
+    //  updateDisplayText(); // update the score/lives/level text at screen top
+    
     
     m_Player->doSomething();
     if (m_Player->isDead())
         return GWSTATUS_PLAYER_DIED;
     //  TO_FIX
     //  FINISH LEVEL
+    
+    //  #1 in the spec
+    //  ask all Actors that are alive to do something
+    for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if (!(*it)->isDead()) {     //  if the Actor is not dead
+            (*it)->doSomething();
+            if (m_Player->isDead())
+                return GWSTATUS_PLAYER_DIED;
+        }
+    }
+    
+    //  #2 in the spec
+    //  delete dead Actors
+    for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->isDead()) {
+            delete (*it);
+            m_Actors.erase(it);
+        }
+    }
+    
+    //  #3 in the spec
+    //  reduce bonus point for each tick
+    if (m_Bonus > 0)
+        m_Bonus--;
+    
+    //  TO_FIX
+    //  add #4 here
+    //  activate the EXIT if all the jewels are collected
+    
+
+    
+    
+    //  TO_FIX
     
     
     return GWSTATUS_CONTINUE_GAME;

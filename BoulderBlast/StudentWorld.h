@@ -15,7 +15,7 @@ class StudentWorld : public GameWorld
 {
 public:
 	StudentWorld(std::string assetDir)
-	 : GameWorld(assetDir)
+	 : GameWorld(assetDir), m_Bonus(1000)
 	{
 	}
     
@@ -37,6 +37,7 @@ private:
     //  data members
     std::list<Actor*> m_Actors;
     Player* m_Player;
+    int m_Bonus;
 };
 
 #endif // STUDENTWORLD_H_
