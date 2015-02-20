@@ -82,4 +82,10 @@ void Player::doSomething() {
     
 }
 
+void Boulder::attacked() {
+    m_health -= 2;
+    if (m_health == 0)
+        setDead();
+}
+
 

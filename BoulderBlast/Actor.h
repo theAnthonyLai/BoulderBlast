@@ -91,6 +91,8 @@ public:
         setVisible(true);
     }
     
+    virtual ~Player() {};   //  TO_FIX ?? nothing here?
+    
     //  Accessors
     
     //  Mutators
@@ -117,13 +119,32 @@ public:
         //  don't think so...
     }
     
-    virtual void doSomething() {
-        //  Walls don't do anything
-        return;
-    }
+    virtual void doSomething() { return; }  //  Walls do nothing
     
 private:
     
+};
+
+class Boulder : public Actor
+{
+public:
+    //  Constructor
+    Boulder(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Actor(imageID, startX, startY, myWorld, none),
+        m_health(10)
+    {
+        setVisible(true);
+    }
+    
+    virtual ~Boulder() {};  // TO_FIX ?? do nothing here?
+    
+    virtual void doSomething() { return; }; //  Boulders do nothing
+    
+    void attacked();
+    void pushed(Direction dir); //  TO_FIX implement this 
+    
+private:
+    int m_health;
 };
 
 
