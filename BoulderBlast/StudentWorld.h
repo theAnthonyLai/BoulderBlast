@@ -25,13 +25,18 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    bool anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const;
-    bool anythingHereThatBlocksBoulder(int searchX, int searchY) const;
+    //bool anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const;
+    //bool anythingHereThatBlocksBoulder(int searchX, int searchY) const;
+    //bool contactBullet(int searchX, int searchY) const;
+    
+    bool isPlayerBlocked() const;
+    
 
 private:
     //  private member functions
     void loadLevel(int& imageID, int startX, int startY);
     void displayGameText();
+    bool moveBoulder(Actor* boulder) const;
     
     //  data members
     std::list<Actor*> m_Actors;

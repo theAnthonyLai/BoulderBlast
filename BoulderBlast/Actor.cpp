@@ -45,7 +45,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX();
                 attemptY = getY() + 1;
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'u'))
+                if (!myWorld->isPlayerBlocked())
                     moveTo(attemptX, attemptY);
                 break;
             case KEY_PRESS_DOWN:
@@ -55,9 +55,8 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX();
                 attemptY = getY() - 1;
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'd'))
+                if (!myWorld->isPlayerBlocked())
                     moveTo(attemptX, attemptY);
-
                 break;
             case KEY_PRESS_LEFT:
                 setDirection(left);
@@ -66,9 +65,8 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX() - 1;
                 attemptY = getY();
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'l'))
+                if (!myWorld->isPlayerBlocked())
                     moveTo(attemptX, attemptY);
-
                 break;
             case KEY_PRESS_RIGHT:
                 setDirection(right);
@@ -77,9 +75,8 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX() + 1;
                 attemptY = getY();
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'r'))
+                if (!myWorld->isPlayerBlocked())
                     moveTo(attemptX, attemptY);
-
                 break;
         }
     }
@@ -99,12 +96,14 @@ void Boulder::attacked() {
         setDead();
 }
 
-bool Boulder::push(int x, int y) {
-    if (!getWorld()->anythingHereThatBlocksBoulder(x, y)) {
-        moveTo(x, y);
-        return true;
-    }
-    return false;   //  can not move Boulder
+void Boulder::push(int x, int y) {
+    moveTo(x, y);
+}
+
+void Bullet::doSomething() {
+    if (isDead())
+        return;
+    
 }
 
 

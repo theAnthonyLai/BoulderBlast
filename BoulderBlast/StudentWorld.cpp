@@ -1,5 +1,4 @@
 #include "StudentWorld.h"
-#include "GraphObject.h"
 #include "Actor.h"
 #include "Level.h"
 #include <string>
@@ -110,6 +109,94 @@ void StudentWorld::cleanUp() {
     
 }
 
+bool StudentWorld::isPlayerBlocked() const
+{
+    int attemptX = m_Player->getX();
+    int attemptY = m_Player->getY();
+    GraphObject::Direction attemptDir = m_Player->getDirection();
+    if (attemptDir == GraphObject::up)
+        attemptY++;
+    else if (attemptDir == GraphObject::down)
+        attemptY--;
+    else if (attemptDir == GraphObject::right)
+        attemptX++;
+    else    //  left
+        attemptX--;
+    
+    //  find if anything is here
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
+            //  found Actor here
+            //  test what's here
+            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+            if (im != nullptr)
+                //  is ImmovableObject
+                return true;
+            Robot* rb = dynamic_cast<Robot*>((*it));
+            if (rb != nullptr)
+                //  is Robot
+                return true;
+
+            Boulder* bd = dynamic_cast<Boulder*>((*it));
+            if (bd != nullptr)
+                //  is Boulder
+                return !moveBoulder((*it));
+                
+        }
+    }
+            
+    return false;
+}
+
+bool StudentWorld::moveBoulder(Actor* boulder) const
+{
+    //  return true if move is success
+    //  otherwise return false
+    
+    //  TO_FIX  duplicate code with isPlayerBlocked
+    int attemptX = boulder->getX();
+    int attemptY = boulder->getY();
+    GraphObject::Direction attemptDir = m_Player->getDirection();
+    if (attemptDir == GraphObject::up)
+        attemptY++;
+    else if (attemptDir == GraphObject::down)
+        attemptY--;
+    else if (attemptDir == GraphObject::right)
+        attemptX++;
+    else    //  left
+        attemptX--;
+    
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
+            //  found Actor here
+            //  test what's here
+            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+            if (im != nullptr)
+                //  is ImmovableObject
+                return false;
+            Robot* rb = dynamic_cast<Robot*>((*it));
+            if (rb != nullptr)
+                //  is Robot
+                return false;
+
+            Boulder* bd = dynamic_cast<Boulder*>((*it));
+            if (bd != nullptr)
+                //  is Boulder
+                return false;
+            //  TO_FIX
+            //  Goodies should return false
+            //  Exit should return false
+            //  MORE??
+        }
+
+    }
+    
+    boulder->moveTo(attemptX, attemptY);
+    return true;
+}
+
+
+/*
 bool StudentWorld::anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const
 {
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
@@ -151,8 +238,35 @@ bool StudentWorld::anythingHereThatBlocksBoulder(int searchX, int searchY) const
     //  no Actor here
     return false;
 }
+ */
 
-
+/*
+bool StudentWorld::contactBullet(int searchX, int searchY) const
+{
+    if (m_Player->getX() == searchX && m_Player->getY() == searchY) {
+        //  hit Player
+        m_Player->attacked();
+        return true;
+    }
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
+            //  found Actor here
+            Boulder* boulderTest = dynamic_cast<Boulder*>((*it));
+            if (boulderTest != nullptr) {
+                boulderTest->attacked();
+                return true;
+            }
+            //  TO_FIX
+            //  if Character
+            //  if wall and factory (create a base class??)
+                
+        }
+    }
+    
+    
+    return false;
+}
+*/
 
 void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
     Level lev(assetDirectory());

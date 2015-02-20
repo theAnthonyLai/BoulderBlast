@@ -29,9 +29,9 @@ public:
     }
     virtual ~Actor() {};
     
-    virtual bool iBlockPlayer() const = 0;
-    virtual bool iBlockRobot() const = 0;
-    virtual bool iBlockBoulder() const { return true; } //  most Actor block Boulder
+    //virtual bool iBlockPlayer() const = 0;
+    //virtual bool iBlockRobot() const = 0;
+    //virtual bool iBlockBoulder() const { return true; } //  most Actor block Boulder
     
     //  Accessors
     bool isDead() const { return m_dead; };
@@ -62,8 +62,8 @@ public:
     }
     
     virtual ~Character() {};
-    virtual bool iBlockPlayer() const { return true; } //  all Characters block Player
-    virtual bool iBlockRobot() const { return true; }   //  all Characters block Robot
+    //virtual bool iBlockPlayer() const { return true; } //  all Characters block Player
+    //virtual bool iBlockRobot() const { return true; }   //  all Characters block Robot
     
     //  Accessors
     int getHealth() const { return m_health; }
@@ -87,6 +87,35 @@ private:
     int m_health;
     int m_ammo;
 };
+
+class ImmovableObject : public Actor
+{
+public:
+    ImmovableObject(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Actor(imageID, startX, startY, myWorld, none)
+    {
+        
+    }
+    virtual void doSomething() = 0;
+    virtual ~ImmovableObject(){}
+private:
+    
+};
+
+
+class Robot : public Character
+{
+public:
+    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
+    : Character(imageID, startX, startY, myWorld, 0, 0, startDirection)
+    {
+        //  TO_FIX might need to take extra parameters
+    }
+    virtual void doSomething() = 0;
+    virtual ~Robot(){}
+};
+
+
 
 class Player : public Character
 {
@@ -112,12 +141,12 @@ private:
 };
 
 
-class Wall : public Actor
+class Wall : public ImmovableObject
 {
 public:
     //  Constructor
     Wall(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Actor(imageID, startX, startY, myWorld, none)
+    : ImmovableObject(imageID, startX, startY, myWorld)
     {
         setVisible(true);
     }
@@ -127,8 +156,8 @@ public:
         //  don't think so...
     }
     
-    virtual bool iBlockPlayer() const { return true; }    //  Walls block Player
-    virtual bool iBlockRobot() const { return true; }   //  Walls block Robot
+    //virtual bool iBlockPlayer() const { return true; }    //  Walls block Player
+    //virtual bool iBlockRobot() const { return true; }   //  Walls block Robot
     
     
     virtual void doSomething() { return; }  //  Walls do nothing
@@ -150,17 +179,40 @@ public:
     
     virtual ~Boulder() {};  // TO_FIX ?? do nothing here?
     
-    virtual bool iBlockPlayer() const { return true; }  //  should never call this!!
-    virtual bool iBlockRobot() const { return true; }   //  Boulders block Robot
+    //virtual bool iBlockPlayer() const { return true; }  //  should never call this!!
+    //virtual bool iBlockRobot() const { return true; }   //  Boulders block Robot
     
     
     virtual void doSomething() { return; }; //  Boulders do nothing
     
     void attacked();
-    bool push(int x, int y); //  TO_FIX implement this
+    void push(int x, int y);
     
 private:
     int m_health;
+};
+
+class Bullet : public Actor
+{
+public:
+    //  Constructor
+    Bullet(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
+    : Actor(imageID, startX, startY, myWorld, startDirection)
+    {
+        setVisible(true);
+    }
+    
+    virtual ~Bullet() {}    // TO_FIX ?? do nothing here?
+    
+    //  TO_FIX true or false?
+    //virtual bool iBlockPlayer() const { return false; }
+    //virtual bool iBlockRobot() const { return false; }
+    
+    virtual void doSomething();
+    
+    
+private:
+    
 };
 
 
