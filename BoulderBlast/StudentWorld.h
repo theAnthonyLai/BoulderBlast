@@ -25,9 +25,7 @@ public:
 
     virtual int move();
 
-	virtual void cleanUp()
-	{
-	}
+    virtual void cleanUp();
     
 
 private:

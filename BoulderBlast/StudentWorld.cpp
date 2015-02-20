@@ -44,11 +44,8 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-    //  TO_FIX
-    //  add #5 here
-    //  Update the Game Status Line
-    //  updateDisplayText(); // update the score/lives/level text at screen top
-    
+    //  #5 in the spec
+    //  update and diplay game text
     displayGameText();
     
     
@@ -97,6 +94,16 @@ int StudentWorld::move()
     
     
     return GWSTATUS_CONTINUE_GAME;
+}
+
+void StudentWorld::cleanUp() {
+    delete m_Player;
+    
+    for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        delete (*it);
+        m_Actors.erase(it);
+    }
+    
 }
 
 void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
