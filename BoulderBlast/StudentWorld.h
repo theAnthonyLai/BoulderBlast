@@ -25,7 +25,8 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    bool anythingHereThatBlocksPlayer(int searchX, int searchY) const;
+    bool anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const;
+    bool anythingHereThatBlocksBoulder(int searchX, int searchY) const;
 
 private:
     //  private member functions

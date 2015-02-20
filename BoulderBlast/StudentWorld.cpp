@@ -1,4 +1,5 @@
 #include "StudentWorld.h"
+#include "GraphObject.h"
 #include "Actor.h"
 #include "Level.h"
 #include <string>
@@ -32,6 +33,9 @@ int StudentWorld::init()
                     break;
                 case IID_WALL:
                     m_Actors.push_back(new Wall(imageID, x, y, this));
+                    break;
+                case IID_BOULDER:
+                    m_Actors.push_back(new Boulder(imageID, x, y, this));
                     break;
             }
         }
@@ -106,17 +110,48 @@ void StudentWorld::cleanUp() {
     
 }
 
-bool StudentWorld::anythingHereThatBlocksPlayer(int searchX, int searchY) const
+bool StudentWorld::anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const
 {
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
             //  found Actor here!!
-            return (*it)->iBlockPlayer();
+            Boulder* boulderTest = dynamic_cast<Boulder*>((*it));
+            if (boulderTest == nullptr) //  not a Boulder
+                return (*it)->iBlockPlayer();
+            switch (searchDir) {
+                case 'u':
+                    searchY++;
+                    break;
+                case 'd':
+                    searchY--;
+                    break;
+                case 'r':
+                    searchX++;
+                    break;
+                case 'l':
+                    searchX--;
+                default:    //  should not go here
+                    break;
+            }
+            return (!boulderTest->push(searchX, searchY));
         }
     }
     //  no Actor here
     return false;
 }
+
+bool StudentWorld::anythingHereThatBlocksBoulder(int searchX, int searchY) const
+{
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
+            //  found Actor here!!
+            return (*it)->iBlockBoulder();
+        }
+    }
+    //  no Actor here
+    return false;
+}
+
 
 
 void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
@@ -143,6 +178,9 @@ void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
                 break;
             case Level::player:
                 imageID = IID_PLAYER;
+                break;
+            case Level::boulder:
+                imageID = IID_BOULDER;
                 break;
             case Level::horiz_snarlbot:
                 cout << "Location 5,10 starts with a horiz. SnarlBot\n";

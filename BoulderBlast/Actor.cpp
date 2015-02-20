@@ -39,7 +39,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX();
                 attemptY = getY() + 1;
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY))
+                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'u'))
                     moveTo(attemptX, attemptY);
                 break;
             case KEY_PRESS_DOWN:
@@ -49,7 +49,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX();
                 attemptY = getY() - 1;
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY))
+                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'd'))
                     moveTo(attemptX, attemptY);
 
                 break;
@@ -60,7 +60,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX() - 1;
                 attemptY = getY();
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY))
+                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'l'))
                     moveTo(attemptX, attemptY);
 
                 break;
@@ -71,7 +71,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX() + 1;
                 attemptY = getY();
-                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY))
+                if (!myWorld->anythingHereThatBlocksPlayer(attemptX, attemptY, 'r'))
                     moveTo(attemptX, attemptY);
 
                 break;
@@ -89,6 +89,14 @@ void Boulder::attacked() {
     m_health -= 2;
     if (m_health == 0)
         setDead();
+}
+
+bool Boulder::push(int x, int y) {
+    if (!getWorld()->anythingHereThatBlocksBoulder(x, y)) {
+        moveTo(x, y);
+        return true;
+    }
+    return false;   //  can not move Boulder
 }
 
 

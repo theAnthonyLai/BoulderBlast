@@ -30,6 +30,8 @@ public:
     virtual ~Actor() {};
     
     virtual bool iBlockPlayer() const = 0;
+    virtual bool iBlockRobot() const = 0;
+    virtual bool iBlockBoulder() const { return true; } //  most Actor block Boulder
     
     //  Accessors
     bool isDead() const { return m_dead; };
@@ -61,6 +63,7 @@ public:
     
     virtual ~Character() {};
     virtual bool iBlockPlayer() const { return true; } //  all Characters block Player
+    virtual bool iBlockRobot() const { return true; }   //  all Characters block Robot
     
     //  Accessors
     int getHealth() const { return m_health; }
@@ -122,7 +125,9 @@ public:
         //  don't think so...
     }
     
-    virtual bool iBlockPlayer() const { return true; }    //  Walls block player
+    virtual bool iBlockPlayer() const { return true; }    //  Walls block Player
+    virtual bool iBlockRobot() const { return true; }   //  Walls block Robot
+    
     
     virtual void doSomething() { return; }  //  Walls do nothing
     
@@ -143,10 +148,14 @@ public:
     
     virtual ~Boulder() {};  // TO_FIX ?? do nothing here?
     
+    virtual bool iBlockPlayer() const { return true; }  //  should never call this!!
+    virtual bool iBlockRobot() const { return true; }   //  Boulders block Robot
+    
+    
     virtual void doSomething() { return; }; //  Boulders do nothing
     
     void attacked();
-    void pushed(Direction dir); //  TO_FIX implement this 
+    bool push(int x, int y); //  TO_FIX implement this
     
 private:
     int m_health;
