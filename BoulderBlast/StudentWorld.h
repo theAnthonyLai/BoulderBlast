@@ -22,11 +22,10 @@ public:
     virtual ~StudentWorld() {}    //  need to work on this
     
     virtual int init();
-
     virtual int move();
-
     virtual void cleanUp();
     
+    bool anythingHereThatBlocksPlayer(int searchX, int searchY) const;
 
 private:
     //  private member functions

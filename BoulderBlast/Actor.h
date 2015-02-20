@@ -29,6 +29,8 @@ public:
     }
     virtual ~Actor() {};
     
+    virtual bool iBlockPlayer() const = 0;
+    
     //  Accessors
     bool isDead() const { return m_dead; };
     StudentWorld* getWorld() const { return m_StudentWorld; };
@@ -58,6 +60,7 @@ public:
     }
     
     virtual ~Character() {};
+    virtual bool iBlockPlayer() const { return true; } //  all Characters block Player
     
     //  Accessors
     int getHealth() const { return m_health; }
@@ -73,7 +76,7 @@ public:
     };
     //  virtual void attacked() = 0;    //  TO_FIX to be changed??
 protected:
-    virtual bool canMoveHere(int attemptX, int attemptY);
+    //  virtual bool canMoveHere(int attemptX, int attemptY);
     //  virtual bool canPushBoulder(int attemptX, int attemptY) = 0;    //  TO_FIX
     
 private:
@@ -118,6 +121,8 @@ public:
         //  TO_FIX write delete here?
         //  don't think so...
     }
+    
+    virtual bool iBlockPlayer() const { return true; }    //  Walls block player
     
     virtual void doSomething() { return; }  //  Walls do nothing
     

@@ -106,6 +106,19 @@ void StudentWorld::cleanUp() {
     
 }
 
+bool StudentWorld::anythingHereThatBlocksPlayer(int searchX, int searchY) const
+{
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
+            //  found Actor here!!
+            return (*it)->iBlockPlayer();
+        }
+    }
+    //  no Actor here
+    return false;
+}
+
+
 void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
     Level lev(assetDirectory());
     
