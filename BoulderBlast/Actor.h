@@ -71,13 +71,14 @@ public:
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
-    void incHealth();   //  TO_FIX may change return type
-    void decHealth();   //  TO_FIX may change return type
+    virtual void attacked() = 0;    //  TO_FIX to be changed??
+    void incHealth(int incBy) { m_health += incBy; }    //  TO_FIX may change return type
+    void decHealth(int decBy);   //  TO_FIX may change return type
     void incAmmo(int nToAdd);
     void decAmmo() {
         m_ammo--;
     };
-    //  virtual void attacked() = 0;    //  TO_FIX to be changed??
+    
 protected:
     //  virtual bool canMoveHere(int attemptX, int attemptY);
     //  virtual bool canPushBoulder(int attemptX, int attemptY) = 0;    //  TO_FIX
@@ -103,6 +104,7 @@ public:
     
     //  Mutators
     virtual void doSomething();
+    virtual void attacked();
     
 private:
 

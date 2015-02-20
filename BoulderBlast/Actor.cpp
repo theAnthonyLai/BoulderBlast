@@ -10,6 +10,12 @@ bool Character::canMoveHere(int attemptX, int attemptY) {
 }
 */
 
+void Character::decHealth(int decBy) {
+    m_health -= decBy;
+    if (m_health <= 0)
+        setDead();
+}
+
 void Player::doSomething() {
     //  1
     //  do nothing if the player is dead
@@ -77,12 +83,14 @@ void Player::doSomething() {
                 break;
         }
     }
-    
-    //  TO_FIX
-    //  Add codes when attacked
-    
-    
-    
+}
+
+void Player::attacked() {
+    decHealth(2);
+    if (!isDead())
+        getWorld()->playSound(SOUND_PLAYER_IMPACT);
+    else
+        getWorld()->playSound(SOUND_ROBOT_DIE);
 }
 
 void Boulder::attacked() {
