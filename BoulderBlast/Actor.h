@@ -10,15 +10,6 @@ class StudentWorld;
 class Actor : public GraphObject
 {
 public:
-//***  Inherited from GraphObject   ***//
-//    GraphObject(int imageID, int startX, int startY, Direction startDirection = none);
-//    void setVisible(bool shouldIDisplay);
-//    void getX() const;
-//    void getY() const;
-//    void moveTo(int x, int y);
-//    Direction getDirection() const; // Directions: none, up, down, left, right
-//    void setDirection(Direction d); // Directions: none, up, down, left, right
-    
     //  Constructor
     Actor(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection = none)
     : GraphObject(imageID, startX, startY, startDirection),
@@ -28,10 +19,6 @@ public:
         
     }
     virtual ~Actor() {};
-    
-    //virtual bool iBlockPlayer() const = 0;
-    //virtual bool iBlockRobot() const = 0;
-    //virtual bool iBlockBoulder() const { return true; } //  most Actor block Boulder
     
     //  Accessors
     bool isDead() const { return m_dead; };
@@ -62,8 +49,6 @@ public:
     }
     
     virtual ~Character() {};
-    //virtual bool iBlockPlayer() const { return true; } //  all Characters block Player
-    //virtual bool iBlockRobot() const { return true; }   //  all Characters block Robot
     
     //  Accessors
     int getHealth() const { return m_health; }
@@ -72,6 +57,7 @@ public:
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
     virtual void attacked() = 0;    //  TO_FIX to be changed??
+    void fire();
     void incHealth(int incBy) { m_health += incBy; }    //  TO_FIX may change return type
     void decHealth(int decBy);   //  TO_FIX may change return type
     void incAmmo(int nToAdd);
@@ -80,8 +66,6 @@ public:
     };
     
 protected:
-    //  virtual bool canMoveHere(int attemptX, int attemptY);
-    //  virtual bool canPushBoulder(int attemptX, int attemptY) = 0;    //  TO_FIX
     
 private:
     int m_health;
@@ -112,6 +96,7 @@ public:
         //  TO_FIX might need to take extra parameters
     }
     virtual void doSomething() = 0;
+    virtual void attacked() = 0;    //  TO_FIX to be changed??
     virtual ~Robot(){}
 };
 
@@ -156,11 +141,26 @@ public:
         //  don't think so...
     }
     
-    //virtual bool iBlockPlayer() const { return true; }    //  Walls block Player
-    //virtual bool iBlockRobot() const { return true; }   //  Walls block Robot
-    
-    
     virtual void doSomething() { return; }  //  Walls do nothing
+    
+private:
+    
+};
+
+class Factory : public ImmovableObject
+{
+public:
+    Factory(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : ImmovableObject(imageID, startX, startY, myWorld)
+    {
+        setVisible(true);
+    }
+    
+    virtual ~Factory() {
+        
+    }
+    
+    virtual void doSoemthing() { return; }  //  TO_FIX!!
     
 private:
     
@@ -178,10 +178,6 @@ public:
     }
     
     virtual ~Boulder() {};  // TO_FIX ?? do nothing here?
-    
-    //virtual bool iBlockPlayer() const { return true; }  //  should never call this!!
-    //virtual bool iBlockRobot() const { return true; }   //  Boulders block Robot
-    
     
     virtual void doSomething() { return; }; //  Boulders do nothing
     
@@ -203,10 +199,6 @@ public:
     }
     
     virtual ~Bullet() {}    // TO_FIX ?? do nothing here?
-    
-    //  TO_FIX true or false?
-    //virtual bool iBlockPlayer() const { return false; }
-    //virtual bool iBlockRobot() const { return false; }
     
     virtual void doSomething();
     

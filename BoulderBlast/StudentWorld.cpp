@@ -195,78 +195,81 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
     return true;
 }
 
-
-/*
-bool StudentWorld::anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const
-{
-    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
-        if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
-            //  found Actor here!!
-            Boulder* boulderTest = dynamic_cast<Boulder*>((*it));
-            if (boulderTest == nullptr) //  not a Boulder
-                return (*it)->iBlockPlayer();
-            switch (searchDir) {
-                case 'u':
-                    searchY++;
-                    break;
-                case 'd':
-                    searchY--;
-                    break;
-                case 'r':
-                    searchX++;
-                    break;
-                case 'l':
-                    searchX--;
-                default:    //  should not go here
-                    break;
-            }
-            return (!boulderTest->push(searchX, searchY));
-        }
-    }
-    //  no Actor here
-    return false;
-}
-
-bool StudentWorld::anythingHereThatBlocksBoulder(int searchX, int searchY) const
-{
-    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
-        if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
-            //  found Actor here!!
-            return (*it)->iBlockBoulder();
-        }
-    }
-    //  no Actor here
-    return false;
-}
- */
-
-/*
-bool StudentWorld::contactBullet(int searchX, int searchY) const
+bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
 {
     if (m_Player->getX() == searchX && m_Player->getY() == searchY) {
-        //  hit Player
         m_Player->attacked();
         return true;
     }
+    bool isFactoryHere = false;
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
             //  found Actor here
-            Boulder* boulderTest = dynamic_cast<Boulder*>((*it));
-            if (boulderTest != nullptr) {
-                boulderTest->attacked();
+            //  test what's here
+            Factory* fa = dynamic_cast<Factory*>((*it));
+            if (fa != nullptr)
+                //  is Factory
+                //  remember there's a Factory here
+                //  continue to check if there's a robot here
+                isFactoryHere = true;
+            Wall* wa = dynamic_cast<Wall*>((*it));
+            if (wa != nullptr) {
+                //  is Wall
+                //  doesn't "attack" but bullet dies
+                return true;
+            }
+            Robot* rb = dynamic_cast<Robot*>((*it));
+            if (rb != nullptr) {
+                //  is Robot
+                rb->attacked();
+                return true;
+            }
+            Boulder* bd = dynamic_cast<Boulder*>((*it));
+            if (bd != nullptr) {
+                //  is Boulder
+                bd->attacked();
                 return true;
             }
             //  TO_FIX
-            //  if Character
-            //  if wall and factory (create a base class??)
-                
+            //  MORE??
         }
+        
     }
     
+    if (isFactoryHere)
+        //  occupy the same coordinates as Factory
+        //  but no robot here
+        return true;
     
+    //  continue moving 
     return false;
 }
-*/
+
+void StudentWorld::createBullet(Actor* firedActor) {
+    int attemptX = firedActor->getX();
+    int attemptY = firedActor->getY();
+    GraphObject::Direction myDir = firedActor->getDirection();
+    
+    switch (myDir) {
+        case GraphObject::up:
+            attemptY++;
+            break;
+        case GraphObject::down:
+            attemptY--;
+            break;
+        case GraphObject::right:
+            attemptX++;
+            break;
+        case GraphObject::left:
+            attemptX--;
+            break;
+        default:    //  WTF?
+            break;
+    }
+    
+    m_Actors.push_back(new Bullet(IID_BULLET, attemptX, attemptY, this, myDir));
+    
+}
 
 void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
     Level lev(assetDirectory());

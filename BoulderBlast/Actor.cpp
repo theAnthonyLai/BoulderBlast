@@ -16,6 +16,10 @@ void Character::decHealth(int decBy) {
         setDead();
 }
 
+void Character::fire() {
+    getWorld()->createBullet(this);
+}
+
 void Player::doSomething() {
     //  1
     //  do nothing if the player is dead
@@ -38,6 +42,11 @@ void Player::doSomething() {
             case KEY_PRESS_SPACE:
                 //  TO_FIX
                 //  add firing codes here
+                if (getAmmo() > 0) {
+                    fire();
+                    decAmmo();
+                    getWorld()->playSound(SOUND_PLAYER_FIRE);
+                }
                 break;
             case KEY_PRESS_UP:
                 setDirection(up);
@@ -103,6 +112,40 @@ void Boulder::push(int x, int y) {
 void Bullet::doSomething() {
     if (isDead())
         return;
+    
+    //  a, b, and c of the spec
+    int myX = getX();
+    int myY = getY();
+    if (getWorld()->doesBulletAttack(myX, myY)) {
+        setDead();
+        return;
+    }
+    
+    //  #3 of the spec
+    Direction myDir = getDirection();
+    switch (myDir) {
+        case up:
+            myY++;
+            break;
+        case down:
+            myY--;
+            break;
+        case right:
+            myX++;
+            break;
+        case left:
+            myX--;
+            break;
+        default:    //  WTF?
+            break;
+    }
+    moveTo(myX, myY);
+    
+    //  #4 of the spec
+    if (getWorld()->doesBulletAttack(myX, myY)) {
+        setDead();
+        return;
+    }
     
 }
 

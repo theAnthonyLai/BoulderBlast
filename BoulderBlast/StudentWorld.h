@@ -30,6 +30,8 @@ public:
     //bool contactBullet(int searchX, int searchY) const;
     
     bool isPlayerBlocked() const;
+    bool doesBulletAttack(int searchX, int searchY) const;
+    void createBullet(Actor* firedActor);
     
 
 private:
