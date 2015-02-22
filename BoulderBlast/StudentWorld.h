@@ -36,7 +36,7 @@ public:
 
 private:
     //  private member functions
-    int loadLevel(int level, int& imageID, int startX, int startY);
+    int loadLevel(int level, int& imageID, int startX, int startY, char& special);
     void displayGameText();
     bool moveBoulder(Actor* boulder) const;
     

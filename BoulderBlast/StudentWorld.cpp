@@ -23,8 +23,9 @@ int StudentWorld::init()
     for (int x = 0; x < VIEW_WIDTH; x++) {
         for (int y = 0; y < VIEW_HEIGHT; y++) {
             int imageID;
+            char special = 'n'; //  for v and h SnarlBot (n for none)
             //  call loadLevel to get the object at this position
-            int loadLevelStatus = loadLevel(level, imageID, x, y);
+            int loadLevelStatus = loadLevel(level, imageID, x, y, special);
             if (loadLevelStatus == -1)
                 //  format error
                 return GWSTATUS_LEVEL_ERROR;
@@ -292,7 +293,7 @@ void StudentWorld::createBullet(Actor* firedActor) {
     
 }
 
-int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY) {
+int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY, char& special) {
     Level lev(assetDirectory());
     
     ostringstream formattedLevel;
@@ -330,19 +331,38 @@ int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY) {
                 imageID = IID_BOULDER;
                 break;
             case Level::horiz_snarlbot:
-                cout << "Location 5,10 starts with a horiz. SnarlBot\n";
+                imageID = IID_SNARLBOT;
+                special = 'h';  //  horizontal
                 break;
             case Level::vert_snarlbot:
-                cout << "Location 5,10 starts with a vertical SnarlBot\n";
+                imageID = IID_SNARLBOT;
+                special = 'v';  //  vertical
                 break;
             case Level::kleptobot_factory:
-                cout << "Location 5,10 holds a KleptoBot Factory\n";
+                imageID = IID_ROBOT_FACTORY;
+                special = 'r';  //  regular
                 break;
             case Level::angry_kleptobot_factory:
-                cout << "Location 5,10 holds an Angry KleptoBot Factory\n";
+                imageID = IID_ROBOT_FACTORY;
+                special = 'a';  //  angry
                 break;
             case Level::wall:
                 imageID = IID_WALL;
+                break;
+            case Level::hole:
+                imageID = IID_HOLE;
+                break;
+            case Level::jewel:
+                imageID = IID_JEWEL;
+                break;
+            case Level::restore_health:
+                imageID = IID_RESTORE_HEALTH;
+                break;
+            case Level::extra_life:
+                imageID = IID_EXTRA_LIFE;
+                break;
+            case Level::ammo:
+                imageID = IID_AMMO;
                 break;
         }
     }
