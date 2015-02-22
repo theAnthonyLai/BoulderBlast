@@ -16,11 +16,21 @@ GameWorld* createStudentWorld(string assetDir)
 int StudentWorld::init()
 {
     m_Bonus = 1000;
+    int level = getLevel();
+    if (level == 100)
+        return GWSTATUS_PLAYER_WON;
     
     for (int x = 0; x < VIEW_WIDTH; x++) {
         for (int y = 0; y < VIEW_HEIGHT; y++) {
             int imageID;
-            loadLevel(imageID, x, y);   //  call loadLevel to get the object at this position
+            //  call loadLevel to get the object at this position
+            int loadLevelStatus = loadLevel(level, imageID, x, y);
+            if (loadLevelStatus == -1)
+                //  format error
+                return GWSTATUS_LEVEL_ERROR;
+            else if (loadLevelStatus == 1)
+                //  no more files, player won
+                return GWSTATUS_PLAYER_WON;
             
             switch (imageID) {
                 case -1:
@@ -282,14 +292,23 @@ void StudentWorld::createBullet(Actor* firedActor) {
     
 }
 
-void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
+int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY) {
     Level lev(assetDirectory());
     
-    Level::LoadResult result = lev.loadLevel("level00.dat");
+    ostringstream formattedLevel;
+    formattedLevel << "level";
+    formattedLevel.fill('0');
+    formattedLevel << setw(2) << level;
+    formattedLevel << ".dat";
+    string levelToLoad = formattedLevel.str();
+    
+    Level::LoadResult result = lev.loadLevel(levelToLoad);
     if (result == Level::load_fail_file_not_found)
-        cerr << "Could not find level00.dat data file\n";
+        //  no more level files, player won
+        return 1;
     else if (result == Level:: load_fail_bad_format)
-        cerr << "Your level was improperly formatted\n";
+        //  format error
+        return -1;
     else if (result == Level:: load_success)
     {
         cerr << "Successfully loaded level\n";
@@ -327,6 +346,7 @@ void StudentWorld::loadLevel(int& imageID, int startX, int startY) {
                 break;
         }
     }
+    return 0;
 }
 
 void StudentWorld::displayGameText()
