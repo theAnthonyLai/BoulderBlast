@@ -149,4 +149,12 @@ void Bullet::doSomething() {
     
 }
 
+void Hole::doSomething()
+{
+    if (isDead())
+        return;
+    if (getWorld()->swallowBoulder(this))
+        setDead();
+}
+
 

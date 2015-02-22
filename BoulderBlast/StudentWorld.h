@@ -32,6 +32,7 @@ public:
     bool isPlayerBlocked() const;
     bool doesBulletAttack(int searchX, int searchY) const;
     void createBullet(Actor* firedActor);
+    bool swallowBoulder(Actor* holeToCheck);
     
 
 private:

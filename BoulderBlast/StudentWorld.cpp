@@ -47,6 +47,8 @@ int StudentWorld::init()
                 case IID_BOULDER:
                     m_Actors.push_back(new Boulder(imageID, x, y, this));
                     break;
+                case IID_HOLE:
+                    m_Actors.push_back(new Hole(imageID, x, y, this));
             }
         }
     }
@@ -192,6 +194,12 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
         if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
             //  found Actor here
             //  test what's here
+            Hole* ho = dynamic_cast<Hole*>((*it));  //  Hole needs to be before ImmovableObject
+            if (ho != nullptr) {
+                //  is Hole
+                boulder->moveTo(attemptX, attemptY);
+                return true;
+            }
             ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
             if (im != nullptr)
                 //  is ImmovableObject
@@ -200,11 +208,11 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
             if (rb != nullptr)
                 //  is Robot
                 return false;
-
             Boulder* bd = dynamic_cast<Boulder*>((*it));
             if (bd != nullptr)
                 //  is Boulder
                 return false;
+            
             //  TO_FIX
             //  Goodies should return false
             //  Exit should return false
@@ -291,6 +299,26 @@ void StudentWorld::createBullet(Actor* firedActor) {
     
     m_Actors.push_back(new Bullet(IID_BULLET, attemptX, attemptY, this, myDir));
     
+}
+
+bool StudentWorld::swallowBoulder(Actor* holeToCheck) {
+    int attemptX = holeToCheck->getX();
+    int attemptY = holeToCheck->getY();
+    
+    for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
+            //  found Actor here
+            //  test what's here
+            Boulder* bd = dynamic_cast<Boulder*>((*it));
+            if (bd != nullptr) {
+                //  is Boulder
+                bd->setDead();
+                return true;
+            }
+        }
+    }
+    
+    return false;
 }
 
 int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY, char& special) {

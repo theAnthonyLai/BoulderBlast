@@ -166,6 +166,23 @@ private:
     
 };
 
+class Hole : public ImmovableObject
+{
+public:
+    Hole(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : ImmovableObject(imageID, startX, startY, myWorld)
+    {
+        setVisible(true);
+    }
+    
+    virtual ~Hole() {};
+    
+    virtual void doSomething();
+    
+private:
+    
+};
+
 class Boulder : public Actor
 {
 public:
