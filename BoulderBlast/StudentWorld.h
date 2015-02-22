@@ -19,7 +19,7 @@ public:
 	{
 	}
     
-    virtual ~StudentWorld() {}    //  need to work on this
+    virtual ~StudentWorld();    //  need to work on this
     
     virtual int init();
     virtual int move();

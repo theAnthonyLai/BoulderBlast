@@ -39,11 +39,21 @@ int StudentWorld::init()
             }
         }
     }
-    
-    
-    
     return GWSTATUS_CONTINUE_GAME;
 }
+
+StudentWorld::~StudentWorld()
+{
+    //  duplicate from cleanUp()
+    //  in case cleanUp() was never called
+    delete m_Player;
+    m_Player = nullptr;
+    for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        delete (*it);
+        m_Actors.erase(it);
+    }
+}
+
 
 int StudentWorld::move()
 {
@@ -101,6 +111,7 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp() {
     delete m_Player;
+    m_Player = nullptr;
     
     for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         delete (*it);
