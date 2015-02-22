@@ -340,7 +340,7 @@ int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY, cha
         return -1;
     else if (result == Level:: load_success)
     {
-        cerr << "Successfully loaded level\n";
+        //  cerr << "Successfully loaded level\n";
         Level::MazeEntry ge = lev.getContentsOf(startX,startY);  // x=5, y=10
         switch (ge)
         {
