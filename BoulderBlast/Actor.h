@@ -58,7 +58,7 @@ public:
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
     virtual void attacked() = 0;    //  TO_FIX to be changed??
     void fire();
-    void incHealth(int incBy) { m_health += incBy; }    //  TO_FIX may change return type
+    void restoreHealth() { m_health = 20; }    //  only use by Player
     void decHealth(int decBy);   //  TO_FIX may change return type
     void incAmmo(int nToAdd);
     void decAmmo() {
@@ -134,7 +134,7 @@ public:
     //  Mutators
     virtual void doSomething();
     virtual void attacked();
-    
+    //void playerRestoreHealth() { restoreHealth(); }
 private:
 
 
@@ -251,6 +251,19 @@ public:
     virtual ~ExtraLifeGoodie() {}
     
 private:
+    
+};
+
+class RestoreHealthGoodie : public Goodie
+{
+public:
+    RestoreHealthGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Goodie(imageID, startX, startY, myWorld)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual ~RestoreHealthGoodie() {}
     
 };
 

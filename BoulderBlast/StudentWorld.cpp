@@ -53,6 +53,9 @@ int StudentWorld::init()
                 case IID_EXTRA_LIFE:
                     m_Actors.push_back(new ExtraLifeGoodie(imageID, x, y, this));
                     break;
+                case IID_RESTORE_HEALTH:
+                    m_Actors.push_back(new RestoreHealthGoodie(imageID, x, y, this));
+                    break;
             }
         }
     }
@@ -332,7 +335,9 @@ bool StudentWorld::isPlayerHere(Actor* actorToCheck) const {
     return false;
 }
 
-
+void StudentWorld::restorePlayerHealth() const {
+    m_Player->restoreHealth();
+}
 
 
 //  private functions
@@ -419,7 +424,7 @@ void StudentWorld::displayGameText()
     int score = getScore();
     int level = getLevel();
     int livesLeft = getLives();
-    int healthLeft = (m_Player->getHealth()) / 20 * 100;    //  TO_FIX ??
+    int healthLeft = (static_cast<double>(m_Player->getHealth()) / 20 * 100);    //  TO_FIX ??
     int ammoLeft = m_Player->getAmmo();
     int bonusLeft = m_Bonus;
     

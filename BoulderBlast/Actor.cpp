@@ -167,7 +167,16 @@ void ExtraLifeGoodie::doSomething()
         getWorld()->incLives();
         setDead();
     }
-    
-    
 }
 
+void RestoreHealthGoodie::doSomething()
+{
+    if (isDead())
+        return;
+    if (getWorld()->isPlayerHere(this)) {
+        getWorld()->increaseScore(500);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        getWorld()->restorePlayerHealth();
+        setDead();
+    }
+}
