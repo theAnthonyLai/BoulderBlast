@@ -60,10 +60,8 @@ public:
     void fire();
     void restoreHealth() { m_health = 20; }    //  only use by Player
     void decHealth(int decBy);   //  TO_FIX may change return type
-    void incAmmo(int nToAdd);
-    void decAmmo() {
-        m_ammo--;
-    };
+    void incAmmo(int nToAdd) { m_ammo += nToAdd; }
+    void decAmmo() { m_ammo--; }
     
 protected:
     
@@ -265,6 +263,18 @@ public:
     virtual void doSomething();
     virtual ~RestoreHealthGoodie() {}
     
+};
+
+class AmmoGoodie : public Goodie
+{
+public:
+    AmmoGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Goodie(imageID, startX, startY, myWorld)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual ~AmmoGoodie() {};
 };
 
 

@@ -35,6 +35,7 @@ public:
     bool swallowBoulder(Actor* holeToCheck);
     bool isPlayerHere(Actor* actorToCheck) const;
     void restorePlayerHealth() const;
+    void addPlayerAmmo() const;
     
 
 private:

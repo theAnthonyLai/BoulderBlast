@@ -56,6 +56,9 @@ int StudentWorld::init()
                 case IID_RESTORE_HEALTH:
                     m_Actors.push_back(new RestoreHealthGoodie(imageID, x, y, this));
                     break;
+                case IID_AMMO:
+                    m_Actors.push_back(new AmmoGoodie(imageID, x, y, this));
+                    break;
             }
         }
     }
@@ -337,6 +340,10 @@ bool StudentWorld::isPlayerHere(Actor* actorToCheck) const {
 
 void StudentWorld::restorePlayerHealth() const {
     m_Player->restoreHealth();
+}
+
+void StudentWorld::addPlayerAmmo() const {
+    m_Player->incAmmo(20);
 }
 
 

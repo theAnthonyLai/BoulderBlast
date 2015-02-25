@@ -180,3 +180,17 @@ void RestoreHealthGoodie::doSomething()
         setDead();
     }
 }
+
+void AmmoGoodie::doSomething()
+{
+    if (isDead())
+        return;
+    if (getWorld()->isPlayerHere(this)) {
+        getWorld()->increaseScore(100);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        getWorld()->addPlayerAmmo();
+        setDead();
+    }
+}
+
+
