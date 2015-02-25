@@ -33,6 +33,7 @@ public:
     bool doesBulletAttack(int searchX, int searchY) const;
     void createBullet(Actor* firedActor);
     bool swallowBoulder(Actor* holeToCheck);
+    bool isPlayerHere(Actor* actorToCheck) const;
     
 
 private:

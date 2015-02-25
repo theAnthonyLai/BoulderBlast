@@ -86,6 +86,21 @@ private:
     
 };
 
+class Goodie : public Actor
+{
+public:
+    Goodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Actor(imageID, startX, startY, myWorld, none)
+    {
+        
+    }
+    virtual void doSomething() = 0;
+    virtual ~Goodie() {}
+    
+private:
+    
+};
+
 
 class Robot : public Character
 {
@@ -224,6 +239,20 @@ private:
     
 };
 
+class ExtraLifeGoodie : public Goodie
+{
+public:
+    ExtraLifeGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Goodie(imageID, startX, startY, myWorld)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual ~ExtraLifeGoodie() {}
+    
+private:
+    
+};
 
 
 

@@ -49,6 +49,10 @@ int StudentWorld::init()
                     break;
                 case IID_HOLE:
                     m_Actors.push_back(new Hole(imageID, x, y, this));
+                    break;
+                case IID_EXTRA_LIFE:
+                    m_Actors.push_back(new ExtraLifeGoodie(imageID, x, y, this));
+                    break;
             }
         }
     }
@@ -320,6 +324,18 @@ bool StudentWorld::swallowBoulder(Actor* holeToCheck) {
     
     return false;
 }
+
+bool StudentWorld::isPlayerHere(Actor* actorToCheck) const {
+    if (m_Player->getX() == actorToCheck->getX() && m_Player->getY() == actorToCheck->getY())
+        return true;
+    
+    return false;
+}
+
+
+
+
+//  private functions
 
 int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY, char& special) {
     Level lev(assetDirectory());

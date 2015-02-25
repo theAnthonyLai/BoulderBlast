@@ -157,4 +157,17 @@ void Hole::doSomething()
         setDead();
 }
 
+void ExtraLifeGoodie::doSomething()
+{
+    if (isDead())
+        return;
+    if (getWorld()->isPlayerHere(this)) {
+        getWorld()->increaseScore(1000);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        getWorld()->incLives();
+        setDead();
+    }
+    
+    
+}
 
