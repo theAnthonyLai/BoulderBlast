@@ -222,6 +222,10 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
             if (bd != nullptr)
                 //  is Boulder
                 return false;
+            Goodie* gd = dynamic_cast<Goodie*>((*it));
+            if (gd != nullptr)
+                //  is Goodie
+                return false;
             
             //  TO_FIX
             //  Goodies should return false
