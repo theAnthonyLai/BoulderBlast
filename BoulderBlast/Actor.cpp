@@ -157,6 +157,20 @@ void Hole::doSomething()
         setDead();
 }
 
+void Exit::doSomething()
+{
+    if (getWorld()->noMoreJewel() && !isVisible()) {
+        setVisible(true);
+        getWorld()->playSound(SOUND_REVEAL_EXIT);
+    } else if (isVisible() && getWorld()->isPlayerHere(this)) {
+        getWorld()->playSound(SOUND_FINISHED_LEVEL);
+        getWorld()->increaseScore(2000);
+        getWorld()->setFinishLevel();
+    }
+    
+    
+}
+
 void ExtraLifeGoodie::doSomething()
 {
     if (isDead())

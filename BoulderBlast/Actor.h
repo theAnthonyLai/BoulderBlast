@@ -237,6 +237,19 @@ private:
     
 };
 
+class Exit : public Actor
+{
+public:
+    Exit(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Actor(imageID, startX, startY, myWorld, none)
+    {
+        setVisible(false);
+    }
+    virtual void doSomething();
+    virtual ~Exit() {}
+    
+};
+
 class ExtraLifeGoodie : public Goodie
 {
 public:
@@ -276,7 +289,6 @@ public:
     virtual void doSomething();
     virtual ~AmmoGoodie() {};
 };
-
 
 
 #endif // ACTOR_H_

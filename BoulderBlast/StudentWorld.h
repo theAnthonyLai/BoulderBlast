@@ -36,7 +36,8 @@ public:
     bool isPlayerHere(Actor* actorToCheck) const;
     void restorePlayerHealth() const;
     void addPlayerAmmo() const;
-    
+    bool noMoreJewel() const { return (m_JewelLeft == 0); }
+    void setFinishLevel() { isLevelFinish = true; }
 
 private:
     //  private member functions
@@ -48,6 +49,8 @@ private:
     std::list<Actor*> m_Actors;
     Player* m_Player;
     int m_Bonus;
+    int m_JewelLeft;
+    bool isLevelFinish;
 };
 
 #endif // STUDENTWORLD_H_

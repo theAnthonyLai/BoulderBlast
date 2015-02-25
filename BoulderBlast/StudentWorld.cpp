@@ -16,6 +16,8 @@ GameWorld* createStudentWorld(string assetDir)
 int StudentWorld::init()
 {
     m_Bonus = 1000;
+    m_JewelLeft = 0;
+    isLevelFinish = false;
     int level = getLevel();
     if (level == 100)
         return GWSTATUS_PLAYER_WON;
@@ -58,6 +60,9 @@ int StudentWorld::init()
                     break;
                 case IID_AMMO:
                     m_Actors.push_back(new AmmoGoodie(imageID, x, y, this));
+                    break;
+                case IID_EXIT:
+                    m_Actors.push_back(new Exit(imageID, x, y, this));
                     break;
             }
         }
@@ -123,8 +128,18 @@ int StudentWorld::move()
     //  add #4 here
     //  activate the EXIT if all the jewels are collected
     
-
     
+    
+    //  End of each tick
+    if (m_Player->isDead()) {
+        decLives();
+        return GWSTATUS_PLAYER_DIED;
+    }
+    
+    if (isLevelFinish) {
+        increaseScore(m_Bonus);
+        return GWSTATUS_FINISHED_LEVEL;
+    }
     
     //  TO_FIX
     
@@ -225,6 +240,10 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
             Goodie* gd = dynamic_cast<Goodie*>((*it));
             if (gd != nullptr)
                 //  is Goodie
+                return false;
+            Exit* ex = dynamic_cast<Exit*>((*it));
+            if (ex != nullptr)
+                //  is Exit
                 return false;
             
             //  TO_FIX
