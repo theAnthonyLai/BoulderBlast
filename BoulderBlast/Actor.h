@@ -247,7 +247,18 @@ public:
     }
     virtual void doSomething();
     virtual ~Exit() {}
-    
+};
+
+class Jewel : public Actor
+{
+public:
+    Jewel(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : Actor(imageID, startX, startY, myWorld, none)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual ~Jewel() {}
 };
 
 class ExtraLifeGoodie : public Goodie

@@ -64,6 +64,10 @@ int StudentWorld::init()
                 case IID_EXIT:
                     m_Actors.push_back(new Exit(imageID, x, y, this));
                     break;
+                case IID_JEWEL:
+                    m_Actors.push_back(new Jewel(imageID, x, y, this));
+                    m_JewelLeft++;
+                    break;
             }
         }
     }
@@ -244,6 +248,10 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
             Exit* ex = dynamic_cast<Exit*>((*it));
             if (ex != nullptr)
                 //  is Exit
+                return false;
+            Jewel* jw = dynamic_cast<Jewel*>((*it));
+            if (jw != nullptr)
+                //  is Jewel
                 return false;
             
             //  TO_FIX

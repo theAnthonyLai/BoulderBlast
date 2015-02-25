@@ -37,6 +37,7 @@ public:
     void restorePlayerHealth() const;
     void addPlayerAmmo() const;
     bool noMoreJewel() const { return (m_JewelLeft == 0); }
+    void decJewel() { m_JewelLeft--; }
     void setFinishLevel() { isLevelFinish = true; }
 
 private:

@@ -167,8 +167,18 @@ void Exit::doSomething()
         getWorld()->increaseScore(2000);
         getWorld()->setFinishLevel();
     }
-    
-    
+}
+
+void Jewel::doSomething()
+{
+    if (isDead())
+        return;
+    if (getWorld()->isPlayerHere(this)) {
+        getWorld()->increaseScore(50);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        getWorld()->decJewel();
+        setDead();
+    }
 }
 
 void ExtraLifeGoodie::doSomething()
