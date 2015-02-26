@@ -174,7 +174,13 @@ void SnarlBot::doSomething()
 
 void SnarlBot::attacked()
 {
-    
+    decHealth(2);
+    if (!isDead())
+        getWorld()->playSound(SOUND_ROBOT_IMPACT);
+    else {
+        getWorld()->playSound(SOUND_ROBOT_DIE);
+        getWorld()->increaseScore(100);
+    }
 }
 
 
