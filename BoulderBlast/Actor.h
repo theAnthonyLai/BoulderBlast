@@ -103,16 +103,32 @@ private:
 class Robot : public Character
 {
 public:
-    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
-    : Character(imageID, startX, startY, myWorld, 0, 0, startDirection)
-    {
-        //  TO_FIX might need to take extra parameters
-    }
+    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);   //  implement in cpp file (don't want to include header)
     virtual void doSomething() = 0;
     virtual void attacked() = 0;    //  TO_FIX to be changed??
+    int getTicksToMove() const { return ticksToMove; }
+    int getTickCount() const { return tickCount; }
+    void incTickCount() { tickCount++; }
+    void tickCountReset() { tickCount = 1; }
     virtual ~Robot(){}
+    
+private:
+    int ticksToMove;
+    int tickCount;
 };
 
+class SnarlBot : public Robot
+{
+public:
+    SnarlBot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
+    : Robot(imageID, startX, startY, myWorld, startDirection, 10)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual void attacked();
+    virtual ~SnarlBot() {}
+};
 
 
 class Player : public Character

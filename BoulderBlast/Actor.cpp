@@ -99,6 +99,41 @@ void Player::attacked() {
         getWorld()->playSound(SOUND_ROBOT_DIE);
 }
 
+Robot::Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth)
+: Character(imageID, startX, startY, myWorld, startHealth, 0, startDirection)
+{
+    //  TO_FIX might need to take extra parameters
+    ticksToMove = (28 - getWorld()->getLevel()) / 4;
+    if (ticksToMove < 3)
+        ticksToMove = 3;
+    tickCount = 1;
+}
+
+void SnarlBot::doSomething()
+{
+    if (isDead())
+        return;
+    if (getTickCount() != getTicksToMove()) {
+        //  don't move during this tick
+        incTickCount();
+        return;
+    }
+    //  else do something
+    if (getDirection() == right)
+        setDirection(left);
+    else if (getDirection() == left)
+        setDirection(right);
+    tickCountReset();
+        
+}
+
+void SnarlBot::attacked()
+{
+    
+}
+
+
+
 void Boulder::attacked() {
     m_health -= 2;
     if (m_health == 0)

@@ -68,6 +68,12 @@ int StudentWorld::init()
                     m_Actors.push_back(new Jewel(imageID, x, y, this));
                     m_JewelLeft++;
                     break;
+                case IID_SNARLBOT:
+                    if (special == 'h')
+                        m_Actors.push_back(new SnarlBot(imageID, x, y, this, GraphObject::right));
+                    else
+                        m_Actors.push_back(new SnarlBot(imageID, x, y, this, GraphObject::down));
+                    break;
             }
         }
     }
