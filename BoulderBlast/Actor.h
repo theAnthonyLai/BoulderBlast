@@ -103,18 +103,16 @@ private:
 class Robot : public Character
 {
 public:
-    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);   //  implement in cpp file (don't want to include header)
+    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth)
+    : Character(imageID, startX, startY, myWorld, startHealth, 0, startDirection)
+    {
+
+    }
     virtual void doSomething() = 0;
     virtual void attacked() = 0;    //  TO_FIX to be changed??
-    int getTicksToMove() const { return ticksToMove; }
-    int getTickCount() const { return tickCount; }
-    void incTickCount() { tickCount++; }
-    void tickCountReset() { tickCount = 1; }
     virtual ~Robot(){}
     
 private:
-    int ticksToMove;
-    int tickCount;
 };
 
 class SnarlBot : public Robot
@@ -129,6 +127,8 @@ public:
     virtual void attacked();
     virtual ~SnarlBot() {}
 };
+
+
 
 
 class Player : public Character
@@ -176,18 +176,17 @@ private:
     
 };
 
-class Factory : public ImmovableObject
+class KleptoBotFactory : public ImmovableObject
 {
 public:
-    Factory(int imageID, int startX, int startY, StudentWorld* myWorld)
+    //  TO_FIX need to specify type of robot to create
+    KleptoBotFactory(int imageID, int startX, int startY, StudentWorld* myWorld)
     : ImmovableObject(imageID, startX, startY, myWorld)
     {
         setVisible(true);
     }
     
-    virtual ~Factory() {
-        
-    }
+    virtual ~KleptoBotFactory() {}
     
     virtual void doSoemthing() { return; }  //  TO_FIX!!
     

@@ -56,6 +56,9 @@ private:
     int m_Bonus;
     int m_JewelLeft;
     bool isLevelFinish;
+    int robotTicksToMove;
+    int robotTickCount;
+    bool doRobotsMove;
 };
 
 #endif // STUDENTWORLD_H_

@@ -18,6 +18,14 @@ int StudentWorld::init()
     m_Bonus = 1000;
     m_JewelLeft = 0;
     isLevelFinish = false;
+    
+    robotTicksToMove = (28 - getLevel()) / 4;
+    if (robotTicksToMove < 3)
+        robotTicksToMove = 3;
+    robotTickCount = 1;
+    doRobotsMove = false;
+    
+    
     int level = getLevel();
     if (level == 100)
         return GWSTATUS_PLAYER_WON;
@@ -110,8 +118,23 @@ int StudentWorld::move()
     
     //  #1 in the spec
     //  ask all Actors that are alive to do something
+    
+    //  check if Robots will be ask to move during this tick
+    if (robotTickCount != robotTicksToMove) {
+        //  Robots don't move during this tick
+        robotTickCount++;
+    } else {
+        doRobotsMove = true;
+        robotTickCount = 1;
+    }
+    
     for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if (!(*it)->isDead()) {     //  if the Actor is not dead
+            if (!doRobotsMove) {    //  if Robots don't move
+                Robot* rb = dynamic_cast<Robot*>((*it));
+                if (rb != nullptr)
+                    continue;
+            }
             (*it)->doSomething();
             if (m_Player->isDead()) {
                 decLives();
@@ -150,6 +173,11 @@ int StudentWorld::move()
         increaseScore(m_Bonus);
         return GWSTATUS_FINISHED_LEVEL;
     }
+    
+    if (doRobotsMove)
+        //  Robots have moved during this tick
+        //  time to take rest!
+        doRobotsMove = false;
     
     //  TO_FIX
     
@@ -230,7 +258,7 @@ bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
         if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
             //  found Actor here
             //  test what's here
-            Factory* fa = dynamic_cast<Factory*>((*it));
+            KleptoBotFactory* fa = dynamic_cast<KleptoBotFactory*>((*it));
             if (fa != nullptr)
                 //  is Factory
                 //  remember there's a Factory here
