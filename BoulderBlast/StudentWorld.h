@@ -10,6 +10,7 @@
 
 class Actor;
 class Player;
+class Robot;
 
 class StudentWorld : public GameWorld
 {
@@ -36,6 +37,7 @@ public:
     bool isPlayerHere(Actor* actorToCheck) const;
     void restorePlayerHealth() const;
     void addPlayerAmmo() const;
+    bool doesRobotFire(Robot* robotToCheck);
     bool noMoreJewel() const { return (m_JewelLeft == 0); }
     void decJewel() { m_JewelLeft--; }
     void setFinishLevel() { isLevelFinish = true; }
@@ -45,6 +47,7 @@ private:
     int loadLevel(int level, int& imageID, int startX, int startY, char& special);
     void displayGameText();
     bool moveBoulder(Actor* boulder) const;
+    bool isBlockedByObstacle(int startX, int endX, int startY, int endY) const;
     
     //  data members
     std::list<Actor*> m_Actors;

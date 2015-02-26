@@ -207,71 +207,6 @@ bool StudentWorld::isPlayerBlocked() const
     return false;
 }
 
-bool StudentWorld::moveBoulder(Actor* boulder) const
-{
-    //  return true if move is success
-    //  otherwise return false
-    
-    //  TO_FIX  duplicate code with isPlayerBlocked
-    int attemptX = boulder->getX();
-    int attemptY = boulder->getY();
-    GraphObject::Direction attemptDir = m_Player->getDirection();
-    if (attemptDir == GraphObject::up)
-        attemptY++;
-    else if (attemptDir == GraphObject::down)
-        attemptY--;
-    else if (attemptDir == GraphObject::right)
-        attemptX++;
-    else    //  left
-        attemptX--;
-    
-    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
-        if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
-            //  found Actor here
-            //  test what's here
-            Hole* ho = dynamic_cast<Hole*>((*it));  //  Hole needs to be before ImmovableObject
-            if (ho != nullptr) {
-                //  is Hole
-                boulder->moveTo(attemptX, attemptY);
-                return true;
-            }
-            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-            if (im != nullptr)
-                //  is ImmovableObject
-                return false;
-            Robot* rb = dynamic_cast<Robot*>((*it));
-            if (rb != nullptr)
-                //  is Robot
-                return false;
-            Boulder* bd = dynamic_cast<Boulder*>((*it));
-            if (bd != nullptr)
-                //  is Boulder
-                return false;
-            Goodie* gd = dynamic_cast<Goodie*>((*it));
-            if (gd != nullptr)
-                //  is Goodie
-                return false;
-            Exit* ex = dynamic_cast<Exit*>((*it));
-            if (ex != nullptr)
-                //  is Exit
-                return false;
-            Jewel* jw = dynamic_cast<Jewel*>((*it));
-            if (jw != nullptr)
-                //  is Jewel
-                return false;
-            
-            //  TO_FIX
-            //  Goodies should return false
-            //  Exit should return false
-            //  MORE??
-        }
-
-    }
-    
-    boulder->moveTo(attemptX, attemptY);
-    return true;
-}
-
 bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
 {
     if (m_Player->getX() == searchX && m_Player->getY() == searchY) {
@@ -344,7 +279,7 @@ void StudentWorld::createBullet(Actor* firedActor) {
             break;
     }
     
-    m_Actors.push_back(new Bullet(IID_BULLET, attemptX, attemptY, this, myDir));
+    m_Actors.push_front(new Bullet(IID_BULLET, attemptX, attemptY, this, myDir));
     
 }
 
@@ -382,6 +317,46 @@ void StudentWorld::restorePlayerHealth() const {
 void StudentWorld::addPlayerAmmo() const {
     m_Player->incAmmo(20);
 }
+
+bool StudentWorld::doesRobotFire(Robot* robotToCheck)
+{
+    int myX = robotToCheck->getX();
+    int myY = robotToCheck->getY();
+    int playerX = m_Player->getX();
+    int playerY = m_Player->getY();
+    GraphObject::Direction attemptDir = robotToCheck->getDirection();
+    
+    switch (attemptDir) {
+        case GraphObject::right:
+            if (playerY == myY && playerX > myX && !isBlockedByObstacle(myX+1, playerX-1, myY, playerY)) {
+                createBullet(robotToCheck);
+                return true;
+            }
+            break;
+        case GraphObject::left:
+            if (playerY == myY && playerX < myX && !isBlockedByObstacle(playerX+1, myX-1, myY, playerY)) {
+                createBullet(robotToCheck);
+                return true;
+            }
+            break;
+        case GraphObject::up:
+            if (playerX == myX && playerY > myY && !isBlockedByObstacle(myX, playerX, myY+1, playerY-1)) {
+                createBullet(robotToCheck);
+                return true;
+            }
+            break;
+        case GraphObject::down:
+            if (playerX == myX && playerY < myY && !isBlockedByObstacle(myX, playerX, playerY+1, myY-1)) {
+                createBullet(robotToCheck);
+                return true;
+            }
+            break;
+        default:    //  WTF
+            break;
+    }
+    return false;
+}
+
 
 
 //  private functions
@@ -462,9 +437,74 @@ int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY, cha
     return 0;
 }
 
+bool StudentWorld::moveBoulder(Actor* boulder) const
+{
+    //  return true if move is success
+    //  otherwise return false
+    
+    //  TO_FIX  duplicate code with isPlayerBlocked
+    int attemptX = boulder->getX();
+    int attemptY = boulder->getY();
+    GraphObject::Direction attemptDir = m_Player->getDirection();
+    if (attemptDir == GraphObject::up)
+        attemptY++;
+    else if (attemptDir == GraphObject::down)
+        attemptY--;
+    else if (attemptDir == GraphObject::right)
+        attemptX++;
+    else    //  left
+        attemptX--;
+    
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
+            //  found Actor here
+            //  test what's here
+            Hole* ho = dynamic_cast<Hole*>((*it));  //  Hole needs to be before ImmovableObject
+            if (ho != nullptr) {
+                //  is Hole
+                boulder->moveTo(attemptX, attemptY);
+                return true;
+            }
+            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+            if (im != nullptr)
+                //  is ImmovableObject
+                return false;
+            Robot* rb = dynamic_cast<Robot*>((*it));
+            if (rb != nullptr)
+                //  is Robot
+                return false;
+            Boulder* bd = dynamic_cast<Boulder*>((*it));
+            if (bd != nullptr)
+                //  is Boulder
+                return false;
+            Goodie* gd = dynamic_cast<Goodie*>((*it));
+            if (gd != nullptr)
+                //  is Goodie
+                return false;
+            Exit* ex = dynamic_cast<Exit*>((*it));
+            if (ex != nullptr)
+                //  is Exit
+                return false;
+            Jewel* jw = dynamic_cast<Jewel*>((*it));
+            if (jw != nullptr)
+                //  is Jewel
+                return false;
+            
+            //  TO_FIX
+            //  Goodies should return false
+            //  Exit should return false
+            //  MORE??
+        }
+        
+    }
+    
+    boulder->moveTo(attemptX, attemptY);
+    return true;
+}
+
+
 void StudentWorld::displayGameText()
 {
-    
     int score = getScore();
     int level = getLevel();
     int livesLeft = getLives();
@@ -497,7 +537,35 @@ void StudentWorld::displayGameText()
     
     string textToDisplay = formattedText.str();
     setGameStatText(textToDisplay);
-    
 }
+
+bool StudentWorld::isBlockedByObstacle(int startX, int endX, int startY, int endY) const
+{
+    
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                if ((*it)->getX() == x && (*it)->getY() == y) {
+                    //  found actor here!
+                    ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+                    if (im != nullptr)
+                        //  ImmovableObject here
+                        return true;
+                    Robot* rb = dynamic_cast<Robot*>((*it));
+                    if (rb != nullptr)
+                        //  Robot here
+                        return true;
+                    Boulder* bd = dynamic_cast<Boulder*>((*it));
+                    if (bd != nullptr)
+                        //  Boulder here
+                        return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
 
 

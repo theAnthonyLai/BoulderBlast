@@ -119,10 +119,14 @@ void SnarlBot::doSomething()
         return;
     }
     //  else do something
+    if (getWorld()->doesRobotFire(this))
+    
+    
+    /*
     if (getDirection() == right)
         setDirection(left);
     else if (getDirection() == left)
-        setDirection(right);
+        setDirection(right);*/
     tickCountReset();
         
 }
