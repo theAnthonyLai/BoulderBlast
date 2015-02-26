@@ -120,20 +120,56 @@ void SnarlBot::doSomething()
     }
     
     //  else do something
+    
+    tickCountReset();
+    
     if (getWorld()->doesRobotFire(this)) {
         getWorld()->playSound(SOUND_ENEMY_FIRE);
-        tickCountReset();
         return;
     }
     
+    int attemptX = getX();
+    int attemptY = getY();
+    Direction myDir = getDirection();
+    switch (myDir) {
+        case right:
+            attemptX++;
+            break;
+        case left:
+            attemptX--;
+            break;
+        case up:
+            attemptY++;
+            break;
+        case down:
+            attemptY--;
+            break;
+        default:    //  WTF
+            break;
+    }
     
-    /*
-    if (getDirection() == right)
-        setDirection(left);
-    else if (getDirection() == left)
-        setDirection(right);*/
-    tickCountReset();
-        
+    if (!getWorld()->isCharacterBlocked(this)) {
+        moveTo(attemptX, attemptY);
+        return;
+    } else {
+        switch (myDir) {
+            case right:
+                setDirection(left);
+                break;
+            case left:
+                setDirection(right);
+                break;
+            case up:
+                setDirection(down);
+                break;
+            case down:
+                setDirection(up);
+                break;
+            default:
+                break;
+        }
+        return;
+    }
 }
 
 void SnarlBot::attacked()
