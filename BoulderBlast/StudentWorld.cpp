@@ -168,11 +168,11 @@ void StudentWorld::cleanUp() {
     
 }
 
-bool StudentWorld::isPlayerBlocked() const
+bool StudentWorld::isCharacterBlocked(Character* characterToCheck) const
 {
-    int attemptX = m_Player->getX();
-    int attemptY = m_Player->getY();
-    GraphObject::Direction attemptDir = m_Player->getDirection();
+    int attemptX = characterToCheck->getX();
+    int attemptY = characterToCheck->getY();
+    GraphObject::Direction attemptDir = characterToCheck->getDirection();
     if (attemptDir == GraphObject::up)
         attemptY++;
     else if (attemptDir == GraphObject::down)
@@ -181,6 +181,10 @@ bool StudentWorld::isPlayerBlocked() const
         attemptX++;
     else    //  left
         attemptX--;
+    
+    if (attemptX == m_Player->getX() && attemptY == m_Player->getY())
+        //  Player is here blocking you
+        return true;
     
     //  find if anything is here
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
@@ -197,10 +201,18 @@ bool StudentWorld::isPlayerBlocked() const
                 return true;
 
             Boulder* bd = dynamic_cast<Boulder*>((*it));
-            if (bd != nullptr)
+            if (bd != nullptr) {
                 //  is Boulder
-                return !moveBoulder((*it));
-                
+                Player* pl = dynamic_cast<Player*>(characterToCheck);
+                if (pl != nullptr)
+                    //  the Character calling this function is Player
+                    //  Player can potentially push Boulder
+                    return !moveBoulder((*it));
+                else
+                    //  the Character calling this function is Robot
+                    //  Robot can't move Boulder
+                    return true;
+            }
         }
     }
             

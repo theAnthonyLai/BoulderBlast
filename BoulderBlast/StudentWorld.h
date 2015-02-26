@@ -9,6 +9,7 @@
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class Actor;
+class Character;
 class Player;
 class Robot;
 
@@ -30,7 +31,7 @@ public:
     //bool anythingHereThatBlocksBoulder(int searchX, int searchY) const;
     //bool contactBullet(int searchX, int searchY) const;
     
-    bool isPlayerBlocked() const;
+    bool isCharacterBlocked(Character* characterToCheck) const;
     bool doesBulletAttack(int searchX, int searchY) const;
     void createBullet(Actor* firedActor);
     bool swallowBoulder(Actor* holeToCheck);

@@ -54,7 +54,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX();
                 attemptY = getY() + 1;
-                if (!myWorld->isPlayerBlocked())
+                if (!myWorld->isCharacterBlocked(this))
                     moveTo(attemptX, attemptY);
                 break;
             case KEY_PRESS_DOWN:
@@ -64,7 +64,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX();
                 attemptY = getY() - 1;
-                if (!myWorld->isPlayerBlocked())
+                if (!myWorld->isCharacterBlocked(this))
                     moveTo(attemptX, attemptY);
                 break;
             case KEY_PRESS_LEFT:
@@ -74,7 +74,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX() - 1;
                 attemptY = getY();
-                if (!myWorld->isPlayerBlocked())
+                if (!myWorld->isCharacterBlocked(this))
                     moveTo(attemptX, attemptY);
                 break;
             case KEY_PRESS_RIGHT:
@@ -84,7 +84,7 @@ void Player::doSomething() {
                 //  moveTo()
                 attemptX = getX() + 1;
                 attemptY = getY();
-                if (!myWorld->isPlayerBlocked())
+                if (!myWorld->isCharacterBlocked(this))
                     moveTo(attemptX, attemptY);
                 break;
         }
@@ -118,8 +118,13 @@ void SnarlBot::doSomething()
         incTickCount();
         return;
     }
+    
     //  else do something
-    if (getWorld()->doesRobotFire(this))
+    if (getWorld()->doesRobotFire(this)) {
+        getWorld()->playSound(SOUND_ENEMY_FIRE);
+        tickCountReset();
+        return;
+    }
     
     
     /*
