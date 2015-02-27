@@ -23,15 +23,11 @@ public:
 	{
 	}
     
-    virtual ~StudentWorld();    //  need to work on this
+    virtual ~StudentWorld();
     
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-    
-    //bool anythingHereThatBlocksPlayer(int searchX, int searchY, char searchDir) const;
-    //bool anythingHereThatBlocksBoulder(int searchX, int searchY) const;
-    //bool contactBullet(int searchX, int searchY) const;
     
     bool isCharacterBlocked(Character* characterToCheck) const;
     bool doesBulletAttack(int searchX, int searchY) const;
@@ -42,10 +38,11 @@ public:
     void restorePlayerHealth() const;
     void addPlayerAmmo() const;
     bool doesRobotFire(Robot* robotToCheck);
+    bool doesFactoryProduce(KleptoBotFactory* factory);
+    
     bool noMoreJewel() const { return (m_JewelLeft == 0); }
     void decJewel() { m_JewelLeft--; }
-    void setFinishLevel() { isLevelFinish = true; }
-    bool doesFactoryProduce(KleptoBotFactory* factory);
+    void setFinishLevel() { m_isLevelFinish = true; }
 
 private:
     //  private member functions
@@ -59,7 +56,7 @@ private:
     Player* m_Player;
     int m_Bonus;
     int m_JewelLeft;
-    bool isLevelFinish;
+    bool m_isLevelFinish;
 };
 
 #endif // STUDENTWORLD_H_

@@ -11,29 +11,26 @@ class StudentWorld;
 class Actor : public GraphObject
 {
 public:
-    //  Constructor
-    Actor(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection = none)
-    : GraphObject(imageID, startX, startY, startDirection),
-        m_StudentWorld(myWorld),
-        m_dead(false)
-    {
-        
-    }
+    Actor(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection = none);
     virtual ~Actor() {};
+    
+    virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
+    virtual void attacked() {}; //  most Actors do nothing when attacked
+
+    virtual bool blocksCharacter() const { return false; }  //  most Actors dont block Character
+    virtual bool blocksBoulder() const { return true; } //  most Actors block Boulder
+    virtual bool blocksBullet() const { return false; } //  most Actors dont block Bullet
     
     //  Accessors
     bool isDead() const { return m_dead; };
     StudentWorld* getWorld() const { return m_StudentWorld; };
-    
+
     //  Mutators
-    virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
-    void setDead() {
-        m_dead = true;
-    };
+    void setDead() { m_dead = true; }
     
 private:
     StudentWorld* m_StudentWorld;
-    bool m_dead;    //  TO_FIX include here? won't be used by walls
+    bool m_dead;
 };
 
 
@@ -41,30 +38,25 @@ class Character : public Actor
 {
 public:
     //  Constructor
-    Character(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth, int startAmmo, Direction startDirection = none)
-    : Actor(imageID, startX, startY, myWorld, startDirection),
-        m_health(startHealth),
-        m_ammo(startAmmo)
-    {
-        
-    }
-    
+    Character(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth, int startAmmo, Direction startDirection = none);
     virtual ~Character() {};
+    
+    virtual void doSomething() = 0; //  pure virtual: Character object should not be created
+    virtual void attacked() = 0;    //  Characters have different behaviors upon attacked
+    
+    virtual bool blocksCharacter() const { return true; }
+    virtual bool blocksBullet() const { return true; }
     
     //  Accessors
     int getHealth() const { return m_health; }
     int getAmmo() const { return m_ammo; }
     
     //  Mutators
-    virtual void doSomething() = 0; //  pure virtual: Character object should not be created
-    virtual void attacked() = 0;    //  TO_FIX to be changed??
     void fire();
     void restoreHealth() { m_health = 20; }    //  only use by Player
-    void decHealth(int decBy);   //  TO_FIX may change return type
+    void decHealth(int decBy);
     void incAmmo(int nToAdd) { m_ammo += nToAdd; }
     void decAmmo() { m_ammo--; }
-    
-protected:
     
 private:
     int m_health;
@@ -74,85 +66,79 @@ private:
 class ImmovableObject : public Actor
 {
 public:
-    ImmovableObject(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Actor(imageID, startX, startY, myWorld, none)
-    {
-        
-    }
-    virtual void doSomething() = 0;
-    virtual ~ImmovableObject(){}
-private:
+    ImmovableObject(int imageID, int startX, int startY, StudentWorld* myWorld);
+    virtual ~ImmovableObject() {}
     
+    virtual void doSomething() = 0;
+    virtual bool blocksCharacter() const { return true; }
+    virtual bool blocksBullet() const { return true; }
 };
 
 class Goodie : public Actor
 {
 public:
-    Goodie(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Actor(imageID, startX, startY, myWorld, none)
-    {
-        
-    }
-    virtual void doSomething() = 0;
+    Goodie(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~Goodie() {}
-    
-private:
-    
+    virtual void doSomething() = 0;
 };
 
 
 class Robot : public Character
 {
 public:
-    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);   //  implement in cpp file (don't want to include header)
+    Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);
+    virtual ~Robot() {}
+    
     virtual void doSomething() = 0;
-    virtual void attacked() = 0;    //  TO_FIX to be changed??
+    virtual void attacked() = 0;
+    
     int getTicksToMove() const { return m_ticksToMove; }
     int getTickCount() const { return m_tickCount; }
     void incTickCount() { m_tickCount++; }
     void tickCountReset() { m_tickCount = 1; }
-    virtual ~Robot(){}
     
 private:
     int m_ticksToMove;
     int m_tickCount;
 };
 
+class Player : public Character
+{
+public:
+    Player(int imageID, int startX, int startY, StudentWorld* myWorld);
+    virtual ~Player() {};
+    virtual void doSomething();
+    virtual void attacked();
+};
+
 class SnarlBot : public Robot
 {
 public:
-    SnarlBot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
-    : Robot(imageID, startX, startY, myWorld, startDirection, 10)
-    {
-        setVisible(true);
-    }
+    SnarlBot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection);
+    virtual ~SnarlBot() {}
     virtual void doSomething();
     virtual void attacked();
-    virtual ~SnarlBot() {}
 };
 
 class KleptoBot : public Robot
 {
 public:
-    KleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth)
-    : Robot(imageID, startX, startY, myWorld, right, startHealth)
-    {
-        resetDistanceBeforeTurning();
-        resetDistanceMoved();
-        m_stolenGoodie = nullptr;
-    }
-    virtual void doSomething();
+    KleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth);
+    virtual ~KleptoBot() {}
+    
+    virtual void doSomething(); //  KleptoBots do mostly the same things
     virtual void attacked() = 0;
-    bool canKleptoMove();
+    
     int getDistanceBeforeTurning() const { return m_distanceBeforeTurning; }
     int getDistanceMoved() const { return m_distanceMoved; }
+    Goodie* getStolenGoodie() const { return m_stolenGoodie; }
+    
     void resetDistanceBeforeTurning();
     void resetDistanceMoved() { m_distanceMoved = 0; };
     void incDistanceMoved() { m_distanceMoved++; }
     void setStolenGoodie(Goodie* gd) { m_stolenGoodie = gd; }
-    Goodie* getStolenGoodie() const { return m_stolenGoodie; }
+    bool canKleptoMove();
     Direction getRandomDirection() const;
-    virtual ~KleptoBot() {}
     
 private:
     int m_distanceBeforeTurning;
@@ -163,85 +149,33 @@ private:
 class RegularKleptoBot : public KleptoBot
 {
 public:
-    RegularKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : KleptoBot(imageID, startX, startY, myWorld, 5)
-    {
-        setVisible(true);
-    }
+    RegularKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld);
+    virtual ~RegularKleptoBot() {}
     virtual void doSomething();
     virtual void attacked();
-    virtual ~RegularKleptoBot() {}
 };
 
 class AngryKleptoBot : public KleptoBot
 {
 public:
-    AngryKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : KleptoBot(imageID, startX, startY, myWorld, 8)
-    {
-        setVisible(true);
-    }
-    virtual void doSomething();
-    virtual void attacked();
+    AngryKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~AngryKleptoBot() {}
-};
-
-class Player : public Character
-{
-public:
-    //  Constructor
-    Player(int imageID, int startX, int startY, StudentWorld* myWorld)  //  No Direction parameter
-    : Character(imageID, startX, startY, myWorld, 20, 20, right)   //  Player starts out facing right
-    {
-        setVisible(true);
-    }
-    
-    virtual ~Player() {};   //  TO_FIX ?? nothing here?
-    
-    //  Accessors
-    
-    //  Mutators
     virtual void doSomething();
     virtual void attacked();
-    //void playerRestoreHealth() { restoreHealth(); }
-private:
-    char m_productType;
-
 };
-
 
 class Wall : public ImmovableObject
 {
 public:
-    //  Constructor
-    Wall(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : ImmovableObject(imageID, startX, startY, myWorld)
-    {
-        setVisible(true);
-    }
-    
-    virtual ~Wall() {
-        //  TO_FIX write delete here?
-        //  don't think so...
-    }
-    
+    Wall(int imageID, int startX, int startY, StudentWorld* myWorld);
+    virtual ~Wall() {}
     virtual void doSomething() { return; }  //  Walls do nothing
-    
-private:
-    
 };
 
 class KleptoBotFactory : public ImmovableObject
 {
 public:
-    //  TO_FIX need to specify type of robot to create
-    KleptoBotFactory(int imageID, int startX, int startY, StudentWorld* myWorld, char toMake)
-    : ImmovableObject(imageID, startX, startY, myWorld)
-    {
-        setVisible(true);
-        m_product = toMake;
-    }
-    
+    KleptoBotFactory(int imageID, int startX, int startY, StudentWorld* myWorld, char toMake);
     virtual ~KleptoBotFactory() {}
     virtual void doSomething();
     char getProduct() const { return m_product; }
@@ -250,40 +184,27 @@ private:
     char m_product;
 };
 
-class Hole : public ImmovableObject
+class Hole : public Actor
 {
 public:
-    Hole(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : ImmovableObject(imageID, startX, startY, myWorld)
-    {
-        setVisible(true);
-    }
-    
+    Hole(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~Hole() {};
     
     virtual void doSomething();
-    
-private:
-    
+    virtual bool blocksCharacter() const { return true; }
+    virtual bool blocksBoulder() const { return false; }
 };
 
 class Boulder : public Actor
 {
 public:
-    //  Constructor
-    Boulder(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Actor(imageID, startX, startY, myWorld, none),
-        m_health(10)
-    {
-        setVisible(true);
-    }
-    
-    virtual ~Boulder() {};  // TO_FIX ?? do nothing here?
+    Boulder(int imageID, int startX, int startY, StudentWorld* myWorld);
+    virtual ~Boulder() {};
     
     virtual void doSomething() { return; }; //  Boulders do nothing
-    
-    void attacked();
-    void push(int x, int y);
+    virtual void attacked();
+    virtual bool blocksCharacter() const { return true; }
+    virtual bool blocksBullet() const { return true; }
     
 private:
     int m_health;
@@ -292,84 +213,49 @@ private:
 class Bullet : public Actor
 {
 public:
-    //  Constructor
-    Bullet(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
-    : Actor(imageID, startX, startY, myWorld, startDirection)
-    {
-        setVisible(true);
-    }
-    
-    virtual ~Bullet() {}    // TO_FIX ?? do nothing here?
-    
+    Bullet(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection);
+    virtual ~Bullet() {}
     virtual void doSomething();
-    
-    
-private:
-    
 };
 
 class Exit : public Actor
 {
 public:
-    Exit(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Actor(imageID, startX, startY, myWorld, none)
-    {
-        setVisible(false);
-    }
-    virtual void doSomething();
+    Exit(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~Exit() {}
+    virtual void doSomething();
 };
 
 class Jewel : public Actor
 {
 public:
-    Jewel(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Actor(imageID, startX, startY, myWorld, none)
-    {
-        setVisible(true);
-    }
-    virtual void doSomething();
+    Jewel(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~Jewel() {}
+    virtual void doSomething();
 };
 
 class ExtraLifeGoodie : public Goodie
 {
 public:
-    ExtraLifeGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Goodie(imageID, startX, startY, myWorld)
-    {
-        setVisible(true);
-    }
-    virtual void doSomething();
+    ExtraLifeGoodie(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~ExtraLifeGoodie() {}
-    
-private:
-    
+    virtual void doSomething();
 };
 
 class RestoreHealthGoodie : public Goodie
 {
 public:
-    RestoreHealthGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Goodie(imageID, startX, startY, myWorld)
-    {
-        setVisible(true);
-    }
-    virtual void doSomething();
+    RestoreHealthGoodie(int imageID, int startX, int startY, StudentWorld* myWorld);
     virtual ~RestoreHealthGoodie() {}
-    
+    virtual void doSomething();
 };
 
 class AmmoGoodie : public Goodie
 {
 public:
-    AmmoGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : Goodie(imageID, startX, startY, myWorld)
-    {
-        setVisible(true);
-    }
+    AmmoGoodie(int imageID, int startX, int startY, StudentWorld* myWorld);
+    virtual ~AmmoGoodie() {}
     virtual void doSomething();
-    virtual ~AmmoGoodie() {};
 };
 
 
