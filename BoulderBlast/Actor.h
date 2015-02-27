@@ -25,6 +25,7 @@ public:
     bool isDead() const { return m_dead; };
     StudentWorld* getWorld() const { return m_StudentWorld; };
     virtual bool blocksCharacter() { return false; }
+    virtual bool blocksBoulder() { return true; }
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
@@ -264,6 +265,7 @@ public:
     virtual ~Hole() {};
     virtual bool attacked() { return false; }
     virtual void doSomething();
+    virtual bool blocksBoulder() { return false; }
     
 private:
     

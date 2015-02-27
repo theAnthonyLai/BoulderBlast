@@ -551,41 +551,44 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
         if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
             //  found Actor here
             //  test what's here
-            Hole* ho = dynamic_cast<Hole*>((*it));  //  Hole needs to be before ImmovableObject
-            if (ho != nullptr) {
-                //  is Hole
-                boulder->moveTo(attemptX, attemptY);
-                return true;
-            }
-            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-            if (im != nullptr)
-                //  is ImmovableObject
-                return false;
-            Robot* rb = dynamic_cast<Robot*>((*it));
-            if (rb != nullptr)
-                //  is Robot
-                return false;
-            Boulder* bd = dynamic_cast<Boulder*>((*it));
-            if (bd != nullptr)
-                //  is Boulder
-                return false;
-            Goodie* gd = dynamic_cast<Goodie*>((*it));
-            if (gd != nullptr)
-                //  is Goodie
-                return false;
-            Exit* ex = dynamic_cast<Exit*>((*it));
-            if (ex != nullptr)
-                //  is Exit
-                return false;
-            Jewel* jw = dynamic_cast<Jewel*>((*it));
-            if (jw != nullptr)
-                //  is Jewel
-                return false;
+//            Hole* ho = dynamic_cast<Hole*>((*it));  //  Hole needs to be before ImmovableObject
+//            if (ho != nullptr) {
+//                //  is Hole
+//                boulder->moveTo(attemptX, attemptY);
+//                return true;
+//            }
+//            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+//            if (im != nullptr)
+//                //  is ImmovableObject
+//                return false;
+//            Robot* rb = dynamic_cast<Robot*>((*it));
+//            if (rb != nullptr)
+//                //  is Robot
+//                return false;
+//            Boulder* bd = dynamic_cast<Boulder*>((*it));
+//            if (bd != nullptr)
+//                //  is Boulder
+//                return false;
+//            Goodie* gd = dynamic_cast<Goodie*>((*it));
+//            if (gd != nullptr)
+//                //  is Goodie
+//                return false;
+//            Exit* ex = dynamic_cast<Exit*>((*it));
+//            if (ex != nullptr)
+//                //  is Exit
+//                return false;
+//            Jewel* jw = dynamic_cast<Jewel*>((*it));
+//            if (jw != nullptr)
+//                //  is Jewel
+//                return false;
             
             //  TO_FIX
             //  Goodies should return false
             //  Exit should return false
             //  MORE??
+            if ((*it)->blocksBoulder())
+                return false;
+            
         }
         
     }
