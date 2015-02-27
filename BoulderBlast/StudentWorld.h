@@ -12,6 +12,7 @@ class Actor;
 class Character;
 class Player;
 class Robot;
+class Goodie;
 
 class StudentWorld : public GameWorld
 {
@@ -36,6 +37,7 @@ public:
     void createBullet(Actor* firedActor);
     bool swallowBoulder(Actor* holeToCheck);
     bool isPlayerHere(Actor* actorToCheck) const;
+    Goodie* isGoodieHere(Actor* actorToCheck) const;
     void restorePlayerHealth() const;
     void addPlayerAmmo() const;
     bool doesRobotFire(Robot* robotToCheck);

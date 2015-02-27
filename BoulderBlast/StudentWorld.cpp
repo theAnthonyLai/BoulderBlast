@@ -78,6 +78,11 @@ int StudentWorld::init()
             }
         }
     }
+    
+    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 11, this));
+    
+    
+    
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -111,7 +116,6 @@ int StudentWorld::move()
     
     //  #1 in the spec
     //  ask all Actors that are alive to do something
-    
     for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if (!(*it)->isDead()) {     //  if the Actor is not dead
             (*it)->doSomething();
@@ -322,6 +326,21 @@ bool StudentWorld::isPlayerHere(Actor* actorToCheck) const {
         return true;
     
     return false;
+}
+
+Goodie* StudentWorld::isGoodieHere(Actor* actorToCheck) const
+{
+    for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        if ((*it)->getX() == actorToCheck->getX() && (*it)->getY() == actorToCheck->getY()) {
+            //  found Actor here
+            //  test what's here
+            Goodie* gd = dynamic_cast<Goodie*>((*it));
+            if (gd != nullptr)
+                //  is Goodie
+                return gd;
+        }
+    }
+    return nullptr;
 }
 
 void StudentWorld::restorePlayerHealth() const {

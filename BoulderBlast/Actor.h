@@ -4,6 +4,7 @@
 #include "GraphObject.h"
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
+const int MY_LUCKY_NUMBER = 9;
 
 class StudentWorld;
 
@@ -130,7 +131,49 @@ public:
     virtual ~SnarlBot() {}
 };
 
+class KleptoBot : public Robot
+{
+public:
+    KleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth)
+    : Robot(imageID, startX, startY, myWorld, right, startHealth)
+    {
+        resetDistanceBeforeTurning();
+        resetDistanceMoved();
+        stolenGoodie = nullptr;
+    }
+    virtual void doSomething() = 0;
+    virtual void attacked() = 0;
+    bool canKleptoMove();
+    int getDistanceBeforeTurning() const { return distanceBeforeTurning; }
+    int getDistanceMoved() const { return distanceMoved; }
+    void resetDistanceBeforeTurning();
+    void resetDistanceMoved() { distanceMoved = 0; };
+    void incDistanceMoved() { distanceMoved++; }
+    void setStolenGoodie(Goodie* gd) { stolenGoodie = gd; }
+    Goodie* getStolenGoodie() const { return stolenGoodie; }
+    Direction getRandomDirection() const;
+    virtual ~KleptoBot() {}
+    
+private:
+    int distanceBeforeTurning;
+    int distanceMoved;
+    Goodie* stolenGoodie;
+};
 
+class RegularKleptoBot : public KleptoBot
+{
+public:
+    RegularKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : KleptoBot(imageID, startX, startY, myWorld, 5)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual void attacked();
+    virtual ~RegularKleptoBot() {}
+    
+    
+};
 
 
 class Player : public Character

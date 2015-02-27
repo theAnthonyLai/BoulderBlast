@@ -1,5 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
+#include <cstdlib>
+#include <iostream>
 
 // Students:  Add code to this file (if you wish), Actor.h, StudentWorld.h, and StudentWorld.cpp
 
@@ -184,7 +186,149 @@ void SnarlBot::attacked()
     }
 }
 
+bool KleptoBot::canKleptoMove()
+{
+    if (getDistanceMoved() < getDistanceBeforeTurning() && !getWorld()->isCharacterBlocked(this)) {
+        int attemptX = getX();
+        int attemptY = getY();
+        Direction myDir = getDirection();
+        switch (myDir) {
+            case right:
+                attemptX++;
+                break;
+            case left:
+                attemptX--;
+                break;
+            case up:
+                attemptY++;
+                break;
+            case down:
+                attemptY--;
+                break;
+            default:    //  WTF
+                break;
+        }
+        moveTo(attemptX, attemptY);
+        incDistanceMoved();
+        return true;
+    }
+    return false;
+}
 
+void KleptoBot::resetDistanceBeforeTurning()
+{
+    distanceBeforeTurning = (rand() % 6) + 1;
+}
+
+GraphObject::Direction KleptoBot::getRandomDirection() const
+{
+    int dir = rand() % 4;
+    switch (dir) {
+        case 0:
+            return up;
+            break;
+        case 1:
+            return down;
+            break;
+        case 2:
+            return right;
+            break;
+        case 3:
+            return left;
+            break;
+        default:    //  should not reach here
+            //  TO_FIX  test??
+            //std::cout << "SH*T";
+            return none;
+    }
+}
+
+void RegularKleptoBot::doSomething()
+{
+    if (isDead())
+        return;
+    
+    if (getTickCount() != getTicksToMove()) {
+        //  don't move during this tick
+        incTickCount();
+        return;
+    }
+    
+    //  else do something
+    tickCountReset();
+    
+    //  let's try stealing a Goodie
+    int random = rand() % 10;
+    if (getStolenGoodie() == nullptr && random == MY_LUCKY_NUMBER) {
+        //  I don't have a Goodie and I'm lucky!!
+        Goodie* gdToPickUp = getWorld()->isGoodieHere(this);
+        if (gdToPickUp != nullptr) {    //  yes I get to pick up a Goodie!
+            setStolenGoodie(gdToPickUp);
+            gdToPickUp->setVisible(false);
+            getWorld()->playSound(SOUND_ROBOT_MUNCH);
+            return;
+        }
+    }
+    
+    //  let's try moving in this direction
+    if (canKleptoMove())
+        return;
+    
+    //  alright we need a different direction
+    resetDistanceBeforeTurning();
+    resetDistanceMoved();
+    
+    //  create random directions array
+    Direction d[4] = { none, none, none, none };
+    for (int i = 0; i < 4; i++) {
+        while (d[i] == none) {
+            Direction dir = getRandomDirection();
+            bool isUnique = true;
+            for (int j = 0; j < i; j++) {
+                if (dir == d[j])
+                    isUnique = false;
+            }
+            if (isUnique)
+                d[i] = dir;
+        }
+    }
+    
+//    d[0] = getRandomDirection();
+//    d[1] = d[2] = d[3] = none;
+    
+    //  try different direction
+    for (int i = 0; i < 4; i++) {
+        setDirection(d[i]);
+        if (canKleptoMove())
+            return;
+    }
+    
+    //  can't move
+    setDirection(d[0]);
+    
+    
+    /*
+    while (d1 == none || d2 == none || d3 == none) {
+        if (canKleptoMove())
+            return;
+        Direction randomDir = none;
+        for(;;) {
+            randomDir = getRandomDirection();
+            if (d1 == none && randomDir != d) {
+                
+            }
+        }
+        
+    }*/
+    
+    
+    
+}
+
+void RegularKleptoBot::attacked()
+{
+    
+}
 
 void Boulder::attacked() {
     m_health -= 2;
