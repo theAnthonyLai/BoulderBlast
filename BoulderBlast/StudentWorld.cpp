@@ -580,6 +580,9 @@ bool StudentWorld::isBlockedByObstacle(int startX, int endX, int startY, int end
             for (int y = startY; y <= endY; y++) {
                 if ((*it)->getX() == x && (*it)->getY() == y) {
                     //  found actor here!
+                    Hole* ho = dynamic_cast<Hole*>((*it));
+                    if (ho !=nullptr)
+                        continue;   //  Hole should not block bullet
                     ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
                     if (im != nullptr)
                         //  ImmovableObject here

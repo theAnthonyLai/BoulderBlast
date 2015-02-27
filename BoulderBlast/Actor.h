@@ -171,8 +171,6 @@ public:
     virtual void doSomething();
     virtual void attacked();
     virtual ~RegularKleptoBot() {}
-    
-    
 };
 
 
