@@ -13,6 +13,7 @@ class Character;
 class Player;
 class Robot;
 class Goodie;
+class KleptoBotFactory;
 
 class StudentWorld : public GameWorld
 {
@@ -44,6 +45,7 @@ public:
     bool noMoreJewel() const { return (m_JewelLeft == 0); }
     void decJewel() { m_JewelLeft--; }
     void setFinishLevel() { isLevelFinish = true; }
+    bool doesFactoryProduce(KleptoBotFactory* factory);
 
 private:
     //  private member functions

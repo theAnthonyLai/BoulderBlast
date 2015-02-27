@@ -383,6 +383,15 @@ void AngryKleptoBot::attacked()
     }
 }
 
+void KleptoBotFactory::doSomething()
+{
+    int random = rand() % 50;
+    if (random == MY_LUCKY_NUMBER) {
+        if (getWorld()->doesFactoryProduce(this))
+            getWorld()->playSound(SOUND_ROBOT_BORN);
+    }
+}
+
 void Boulder::attacked() {
     m_health -= 2;
     if (m_health == 0)

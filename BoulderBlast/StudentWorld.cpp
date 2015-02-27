@@ -75,12 +75,17 @@ int StudentWorld::init()
                     else
                         m_Actors.push_back(new SnarlBot(imageID, x, y, this, GraphObject::down));
                     break;
+                case IID_ROBOT_FACTORY:
+                    if (special == 'r')
+                        m_Actors.push_back(new KleptoBotFactory(imageID, x, y, this, 'r'));
+                    else
+                        m_Actors.push_back(new KleptoBotFactory(imageID, x, y, this, 'a'));
             }
         }
     }
     
-    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 11, this));
-    m_Actors.push_back(new AngryKleptoBot(IID_KLEPTOBOT, 13, 8, this));
+//    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 11, this));
+//    m_Actors.push_back(new AngryKleptoBot(IID_KLEPTOBOT, 13, 8, this));
     
     
     
@@ -388,6 +393,50 @@ bool StudentWorld::doesRobotFire(Robot* robotToCheck)
         default:    //  WTF
             break;
     }
+    return false;
+}
+
+bool StudentWorld::doesFactoryProduce(KleptoBotFactory* factory)
+{
+    int leftBound = factory->getX() - 3;
+    if (leftBound < 0)
+        leftBound = 0;
+    int rightBound = factory->getX() + 3;
+    if (rightBound > 14)
+        rightBound = 14;
+    int upperBound = factory->getY() + 3;
+    if (upperBound > 14)
+        upperBound = 14;
+    int lowerBound = factory->getY() - 3;
+    if (lowerBound < 0)
+        lowerBound = 0;
+    
+    int KleptoCount = 0;
+    for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
+        KleptoBot* kb = dynamic_cast<KleptoBot*>((*it));
+        if (kb == nullptr)
+            // is NOT KleptoBot here
+            continue;
+        else {
+            if ((*it)->getX() == factory->getX() && (*it)->getY() == factory->getY())
+                //  KleptoBot on the factory!!
+                return false;
+            if (leftBound <= (*it)->getX() && (*it)->getX() <= rightBound && lowerBound <= (*it)->getY() && (*it)->getY() <= upperBound)
+                KleptoCount++;
+        }
+    }
+    
+    if (KleptoCount < 3) {
+        if (factory->getProduct() == 'r') {
+            m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, factory->getX(), factory->getY(), this));
+            return true;
+        } else {
+            //  AngryKleptoBot Factory
+            m_Actors.push_back(new AngryKleptoBot(IID_KLEPTOBOT, factory->getX(), factory->getY(), this));
+            return true;
+        }
+    }
+    
     return false;
 }
 

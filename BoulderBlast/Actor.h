@@ -235,18 +235,19 @@ class KleptoBotFactory : public ImmovableObject
 {
 public:
     //  TO_FIX need to specify type of robot to create
-    KleptoBotFactory(int imageID, int startX, int startY, StudentWorld* myWorld)
+    KleptoBotFactory(int imageID, int startX, int startY, StudentWorld* myWorld, char toMake)
     : ImmovableObject(imageID, startX, startY, myWorld)
     {
         setVisible(true);
+        m_product = toMake;
     }
     
     virtual ~KleptoBotFactory() {}
-    
-    virtual void doSoemthing() { return; }  //  TO_FIX!!
+    virtual void doSomething();
+    char getProduct() const { return m_product; }
     
 private:
-    
+    char m_product;
 };
 
 class Hole : public ImmovableObject
