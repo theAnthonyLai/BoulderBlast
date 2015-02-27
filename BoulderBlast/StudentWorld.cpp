@@ -80,6 +80,7 @@ int StudentWorld::init()
     }
     
     m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 11, this));
+    m_Actors.push_back(new AngryKleptoBot(IID_KLEPTOBOT, 13, 8, this));
     
     
     

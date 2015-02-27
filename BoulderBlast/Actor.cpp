@@ -344,7 +344,43 @@ void RegularKleptoBot::attacked()
             getStolenGoodie()->setVisible(true);
         getWorld()->increaseScore(10);
     }
+}
 
+void AngryKleptoBot::doSomething()
+{
+    if (isDead())
+        return;
+    
+    if (getTickCount() != getTicksToMove()) {
+        //  don't move during this tick
+        incTickCount();
+        return;
+    }
+    
+    //  else do something
+    tickCountReset();
+    
+    //  check if AngryKleptoBot get to shoot
+    if (getWorld()->doesRobotFire(this)) {
+        getWorld()->playSound(SOUND_ENEMY_FIRE);
+        return;
+    }
+    
+    KleptoBot::doSomething();
+}
+
+void AngryKleptoBot::attacked()
+{
+    decHealth(2);
+    if (!isDead())
+        getWorld()->playSound(SOUND_ROBOT_IMPACT);
+    else {
+        getWorld()->playSound(SOUND_ROBOT_DIE);
+        if (getStolenGoodie() != nullptr)
+            //  this Klepto has a Goodie
+            getStolenGoodie()->setVisible(true);
+        getWorld()->increaseScore(20);
+    }
 }
 
 void Boulder::attacked() {

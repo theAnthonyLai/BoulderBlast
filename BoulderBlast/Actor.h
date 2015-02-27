@@ -173,6 +173,18 @@ public:
     virtual ~RegularKleptoBot() {}
 };
 
+class AngryKleptoBot : public KleptoBot
+{
+public:
+    AngryKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld)
+    : KleptoBot(imageID, startX, startY, myWorld, 8)
+    {
+        setVisible(true);
+    }
+    virtual void doSomething();
+    virtual void attacked();
+    virtual ~AngryKleptoBot() {}
+};
 
 class Player : public Character
 {
