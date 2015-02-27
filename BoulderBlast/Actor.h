@@ -20,13 +20,13 @@ public:
         
     }
     virtual ~Actor() {};
-    virtual bool attacked() { return false; }
+    virtual bool blocksBullet() { return false; }
     //  Accessors
     bool isDead() const { return m_dead; };
     StudentWorld* getWorld() const { return m_StudentWorld; };
     virtual bool blocksCharacter() { return false; }
     virtual bool blocksBoulder() { return true; }
-    
+    virtual void attacked() {};
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
     void setDead() { m_dead = true; }
@@ -55,10 +55,11 @@ public:
     int getHealth() const { return m_health; }
     int getAmmo() const { return m_ammo; }
     virtual bool blocksCharacter() { return true; }
+    virtual bool blocksBullet() { return true; }
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
-    virtual bool attacked() = 0;    //  TO_FIX to be changed??
+    virtual void attacked() = 0;    //  TO_FIX to be changed??
     void fire();
     void restoreHealth() { m_health = 20; }    //  only use by Player
     void decHealth(int decBy);   //  TO_FIX may change return type
@@ -81,7 +82,7 @@ public:
         
     }
     virtual void doSomething() = 0;
-    virtual bool attacked() { return true; }
+    virtual bool blocksBullet() { return true; }
     virtual bool blocksCharacter() { return true; }
     virtual ~ImmovableObject(){}
 private:
@@ -109,7 +110,7 @@ class Robot : public Character
 public:
     Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);   //  implement in cpp file (don't want to include header)
     virtual void doSomething() = 0;
-    virtual bool attacked() = 0;    //  TO_FIX to be changed??
+    virtual void attacked() = 0;    //  TO_FIX to be changed??
     int getTicksToMove() const { return m_ticksToMove; }
     int getTickCount() const { return m_tickCount; }
     void incTickCount() { m_tickCount++; }
@@ -130,7 +131,7 @@ public:
         setVisible(true);
     }
     virtual void doSomething();
-    virtual bool attacked();
+    virtual void attacked();
     virtual ~SnarlBot() {}
 };
 
@@ -145,7 +146,7 @@ public:
         m_stolenGoodie = nullptr;
     }
     virtual void doSomething();
-    virtual bool attacked() = 0;
+    virtual void attacked() = 0;
     bool canKleptoMove();
     int getDistanceBeforeTurning() const { return m_distanceBeforeTurning; }
     int getDistanceMoved() const { return m_distanceMoved; }
@@ -172,7 +173,7 @@ public:
         setVisible(true);
     }
     virtual void doSomething();
-    virtual bool attacked();
+    virtual void attacked();
     virtual ~RegularKleptoBot() {}
 };
 
@@ -185,7 +186,7 @@ public:
         setVisible(true);
     }
     virtual void doSomething();
-    virtual bool attacked();
+    virtual void attacked();
     virtual ~AngryKleptoBot() {}
 };
 
@@ -205,7 +206,7 @@ public:
     
     //  Mutators
     virtual void doSomething();
-    virtual bool attacked();
+    virtual void attacked();
     //void playerRestoreHealth() { restoreHealth(); }
 private:
     char m_productType;
@@ -253,19 +254,19 @@ private:
     char m_product;
 };
 
-class Hole : public ImmovableObject
+class Hole : public Actor
 {
 public:
     Hole(int imageID, int startX, int startY, StudentWorld* myWorld)
-    : ImmovableObject(imageID, startX, startY, myWorld)
+    : Actor(imageID, startX, startY, myWorld, none)
     {
         setVisible(true);
     }
     
     virtual ~Hole() {};
-    virtual bool attacked() { return false; }
     virtual void doSomething();
     virtual bool blocksBoulder() { return false; }
+    virtual bool blocksCharacter() { return true; }
     
 private:
     
@@ -285,8 +286,8 @@ public:
     virtual ~Boulder() {};  // TO_FIX ?? do nothing here?
     
     virtual void doSomething() { return; }; //  Boulders do nothing
-    
-    virtual bool attacked();
+    virtual bool blocksBullet() { return true; }
+    virtual void attacked();
     void push(int x, int y);
     
 private:

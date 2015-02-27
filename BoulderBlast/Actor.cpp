@@ -93,13 +93,12 @@ void Player::doSomething() {
     }
 }
 
-bool Player::attacked() {
+void Player::attacked() {
     decHealth(2);
     if (!isDead())
         getWorld()->playSound(SOUND_PLAYER_IMPACT);
     else
         getWorld()->playSound(SOUND_ROBOT_DIE);
-    return true;
 }
 
 Robot::Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth)
@@ -176,7 +175,7 @@ void SnarlBot::doSomething()
     }
 }
 
-bool SnarlBot::attacked()
+void SnarlBot::attacked()
 {
     decHealth(2);
     if (!isDead())
@@ -185,7 +184,6 @@ bool SnarlBot::attacked()
         getWorld()->playSound(SOUND_ROBOT_DIE);
         getWorld()->increaseScore(100);
     }
-    return true;
 }
 
 bool KleptoBot::canKleptoMove()
@@ -334,7 +332,7 @@ void RegularKleptoBot::doSomething()
     
 }
 
-bool RegularKleptoBot::attacked()
+void RegularKleptoBot::attacked()
 {
     decHealth(2);
     if (!isDead())
@@ -346,7 +344,6 @@ bool RegularKleptoBot::attacked()
             getStolenGoodie()->setVisible(true);
         getWorld()->increaseScore(10);
     }
-    return true;
 }
 
 void AngryKleptoBot::doSomething()
@@ -372,7 +369,7 @@ void AngryKleptoBot::doSomething()
     KleptoBot::doSomething();
 }
 
-bool AngryKleptoBot::attacked()
+void AngryKleptoBot::attacked()
 {
     decHealth(2);
     if (!isDead())
@@ -384,7 +381,6 @@ bool AngryKleptoBot::attacked()
             getStolenGoodie()->setVisible(true);
         getWorld()->increaseScore(20);
     }
-    return true;
 }
 
 void KleptoBotFactory::doSomething()
@@ -396,11 +392,10 @@ void KleptoBotFactory::doSomething()
     }
 }
 
-bool Boulder::attacked() {
+void Boulder::attacked() {
     m_health -= 2;
     if (m_health == 0)
         setDead();
-    return true;
 }
 
 void Boulder::push(int x, int y) {

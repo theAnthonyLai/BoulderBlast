@@ -274,9 +274,10 @@ bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
 //            }
             //  TO_FIX
             //  MORE??
-            if ((*it)->attacked())
+            if ((*it)->blocksBullet()) {
+                (*it)->attacked();
                 return true;
-            
+            }
         }
         
     }
@@ -339,8 +340,8 @@ bool StudentWorld::swallowBoulder(Actor* holeToCheck) {
 bool StudentWorld::isPlayerHere(Actor* actorToCheck) const {
     if (m_Player->getX() == actorToCheck->getX() && m_Player->getY() == actorToCheck->getY())
         return true;
-    
-    return false;
+    else
+        return false;
 }
 
 Goodie* StudentWorld::isGoodieHere(Actor* actorToCheck) const
@@ -642,20 +643,22 @@ bool StudentWorld::isBlockedByObstacle(int startX, int endX, int startY, int end
             for (int y = startY; y <= endY; y++) {
                 if ((*it)->getX() == x && (*it)->getY() == y) {
                     //  found actor here!
-                    Hole* ho = dynamic_cast<Hole*>((*it));
-                    if (ho !=nullptr)
-                        continue;   //  Hole should not block bullet
-                    ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-                    if (im != nullptr)
-                        //  ImmovableObject here
-                        return true;
-                    Robot* rb = dynamic_cast<Robot*>((*it));
-                    if (rb != nullptr)
-                        //  Robot here
-                        return true;
-                    Boulder* bd = dynamic_cast<Boulder*>((*it));
-                    if (bd != nullptr)
-                        //  Boulder here
+//                    Hole* ho = dynamic_cast<Hole*>((*it));
+//                    if (ho !=nullptr)
+//                        continue;   //  Hole should not block bullet
+//                    ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+//                    if (im != nullptr)
+//                        //  ImmovableObject here
+//                        return true;
+//                    Robot* rb = dynamic_cast<Robot*>((*it));
+//                    if (rb != nullptr)
+//                        //  Robot here
+//                        return true;
+//                    Boulder* bd = dynamic_cast<Boulder*>((*it));
+//                    if (bd != nullptr)
+//                        //  Boulder here
+//                        return true;
+                    if ((*it)->blocksBullet())
                         return true;
                 }
             }
