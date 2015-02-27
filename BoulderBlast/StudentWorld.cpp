@@ -17,7 +17,7 @@ int StudentWorld::init()
 {
     m_Bonus = 1000;
     m_JewelLeft = 0;
-    isLevelFinish = false;
+    m_isLevelFinish = false;
     
     int level = getLevel();
     if (level == 100)
@@ -92,7 +92,6 @@ int StudentWorld::init()
 //    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 2, 4, this));
     
     
-    
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -115,17 +114,21 @@ int StudentWorld::move()
     //  update and diplay game text
     displayGameText();
     
-    
+    //  #1 in the spec
+    //  ask all Actors that are alive to do something
+    //  ask Player first
     m_Player->doSomething();
     if (m_Player->isDead()) {
         decLives();
         return GWSTATUS_PLAYER_DIED;
     }
-    //  TO_FIX
     //  FINISH LEVEL
+    if (m_isLevelFinish) {
+        increaseScore(m_Bonus);
+        return GWSTATUS_FINISHED_LEVEL;
+    }
     
-    //  #1 in the spec
-    //  ask all Actors that are alive to do something
+    //  now other Actors
     for (list<Actor*>::iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if (!(*it)->isDead()) {     //  if the Actor is not dead
             (*it)->doSomething();
@@ -150,30 +153,19 @@ int StudentWorld::move()
     if (m_Bonus > 0)
         m_Bonus--;
     
-    //  TO_FIX
-    //  add #4 here
-    //  activate the EXIT if all the jewels are collected
-    
+    //  #4 in the spec (reveal EXIT) is handled by Exit::doSomething()
     
     
     //  End of each tick
     if (m_Player->isDead()) {
         decLives();
         return GWSTATUS_PLAYER_DIED;
-    }
-    
-    if (isLevelFinish) {
-        increaseScore(m_Bonus);
-        return GWSTATUS_FINISHED_LEVEL;
-    }
-    
-    //  TO_FIX
-    
-    
-    return GWSTATUS_CONTINUE_GAME;
+    } else
+        return GWSTATUS_CONTINUE_GAME;
 }
 
-void StudentWorld::cleanUp() {
+void StudentWorld::cleanUp()
+{
     delete m_Player;
     m_Player = nullptr;
     
@@ -181,7 +173,6 @@ void StudentWorld::cleanUp() {
         delete (*it);
         m_Actors.erase(it);
     }
-    
 }
 
 bool StudentWorld::isCharacterBlocked(Character* characterToCheck) const
@@ -189,14 +180,22 @@ bool StudentWorld::isCharacterBlocked(Character* characterToCheck) const
     int attemptX = characterToCheck->getX();
     int attemptY = characterToCheck->getY();
     GraphObject::Direction attemptDir = characterToCheck->getDirection();
-    if (attemptDir == GraphObject::up)
-        attemptY++;
-    else if (attemptDir == GraphObject::down)
-        attemptY--;
-    else if (attemptDir == GraphObject::right)
-        attemptX++;
-    else    //  left
-        attemptX--;
+    switch (attemptDir) {
+        case GraphObject::up:
+            attemptY++;
+            break;
+        case GraphObject::down:
+            attemptY--;
+            break;
+        case GraphObject::right:
+            attemptX++;
+            break;
+        case GraphObject::left:
+            attemptX--;
+            break;
+        default:    //  WTF?
+            break;
+    }
     
     if (attemptX == m_Player->getX() && attemptY == m_Player->getY())
         //  Player is here blocking you
@@ -206,28 +205,14 @@ bool StudentWorld::isCharacterBlocked(Character* characterToCheck) const
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
             //  found Actor here
-            //  test what's here
-            Boulder* bd = dynamic_cast<Boulder*>((*it));
-            if (bd != nullptr) {
-                //  is Boulder
-                Player* pl = dynamic_cast<Player*>(characterToCheck);
-                if (pl != nullptr)
-                    //  the Character calling this function is Player
-                    //  Player can potentially push Boulder
-                    return !moveBoulder((*it));
-                else
-                    //  the Character calling this function is Robot
-                    //  Robot can't move Boulder
-                    return true;
+            if (characterToCheck == m_Player) {
+                //  the Character calling this function is Player
+                //  Player can potentially push Boulder
+                Boulder* bd = dynamic_cast<Boulder*>((*it));
+                if (bd != nullptr)
+                    //  is Boulder
+                    return (!moveBoulder((*it)));
             }
-//            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-//            if (im != nullptr)
-//                //  is ImmovableObject
-//                return true;
-//            Robot* rb = dynamic_cast<Robot*>((*it));
-//            if (rb != nullptr)
-//                //  is Robot
-//                return true;
             if ((*it)->blocksCharacter())
                 return true;
 
@@ -243,37 +228,10 @@ bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
         m_Player->attacked();
         return true;
     }
-//    bool isFactoryHere = false;
+    
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
             //  found Actor here
-            //  test what's here
-//            KleptoBotFactory* fa = dynamic_cast<KleptoBotFactory*>((*it));
-//            if (fa != nullptr)
-//                //  is Factory
-//                //  remember there's a Factory here
-//                //  continue to check if there's a robot here
-//                isFactoryHere = true;
-//            Wall* wa = dynamic_cast<Wall*>((*it));
-//            if (wa != nullptr) {
-//                //  is Wall
-//                //  doesn't "attack" but bullet dies
-//                return true;
-//            }
-//            Robot* rb = dynamic_cast<Robot*>((*it));
-//            if (rb != nullptr) {
-//                //  is Robot
-//                rb->attacked();
-//                return true;
-//            }
-//            Boulder* bd = dynamic_cast<Boulder*>((*it));
-//            if (bd != nullptr) {
-//                //  is Boulder
-//                bd->attacked();
-//                return true;
-//            }
-            //  TO_FIX
-            //  MORE??
             if ((*it)->blocksBullet()) {
                 (*it)->attacked();
                 return true;
@@ -281,11 +239,6 @@ bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
         }
         
     }
-    
-//    if (isFactoryHere)
-//        //  occupy the same coordinates as Factory
-//        //  but no robot here
-//        return true;
     
     //  continue moving 
     return false;
@@ -468,17 +421,14 @@ int StudentWorld::loadLevel(int level, int& imageID, int startX, int startY, cha
     if (result == Level::load_fail_file_not_found)
         //  no more level files, player won
         return 1;
-    else if (result == Level:: load_fail_bad_format)
+    else if (result == Level::load_fail_bad_format)
         //  format error
         return -1;
-    else if (result == Level:: load_success)
+    else if (result == Level::load_success)
     {
-        //  cerr << "Successfully loaded level\n";
-        Level::MazeEntry ge = lev.getContentsOf(startX,startY);  // x=5, y=10
+        Level::MazeEntry ge = lev.getContentsOf(startX,startY);
         switch (ge)
         {
-            //  TO_FIX
-            //  Add other classes...add parameter to distinguish vert and horizontal snarlbot??
             case Level::empty:
                 imageID = -1;   //  make -1 the identifier of empty
                 break;
@@ -535,7 +485,6 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
     //  return true if move is success
     //  otherwise return false
     
-    //  TO_FIX  duplicate code with isPlayerBlocked
     int attemptX = boulder->getX();
     int attemptY = boulder->getY();
     GraphObject::Direction attemptDir = m_Player->getDirection();
@@ -550,54 +499,15 @@ bool StudentWorld::moveBoulder(Actor* boulder) const
     
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
-            //  found Actor here
-            //  test what's here
-//            Hole* ho = dynamic_cast<Hole*>((*it));  //  Hole needs to be before ImmovableObject
-//            if (ho != nullptr) {
-//                //  is Hole
-//                boulder->moveTo(attemptX, attemptY);
-//                return true;
-//            }
-//            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-//            if (im != nullptr)
-//                //  is ImmovableObject
-//                return false;
-//            Robot* rb = dynamic_cast<Robot*>((*it));
-//            if (rb != nullptr)
-//                //  is Robot
-//                return false;
-//            Boulder* bd = dynamic_cast<Boulder*>((*it));
-//            if (bd != nullptr)
-//                //  is Boulder
-//                return false;
-//            Goodie* gd = dynamic_cast<Goodie*>((*it));
-//            if (gd != nullptr)
-//                //  is Goodie
-//                return false;
-//            Exit* ex = dynamic_cast<Exit*>((*it));
-//            if (ex != nullptr)
-//                //  is Exit
-//                return false;
-//            Jewel* jw = dynamic_cast<Jewel*>((*it));
-//            if (jw != nullptr)
-//                //  is Jewel
-//                return false;
-            
-            //  TO_FIX
-            //  Goodies should return false
-            //  Exit should return false
-            //  MORE??
             if ((*it)->blocksBoulder())
                 return false;
-            
         }
-        
     }
     
+    //  nothing is blocking Boulder
     boulder->moveTo(attemptX, attemptY);
     return true;
 }
-
 
 void StudentWorld::displayGameText()
 {
@@ -637,27 +547,11 @@ void StudentWorld::displayGameText()
 
 bool StudentWorld::isBlockedByObstacle(int startX, int endX, int startY, int endY) const
 {
-    
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if ((*it)->getX() == x && (*it)->getY() == y) {
                     //  found actor here!
-//                    Hole* ho = dynamic_cast<Hole*>((*it));
-//                    if (ho !=nullptr)
-//                        continue;   //  Hole should not block bullet
-//                    ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-//                    if (im != nullptr)
-//                        //  ImmovableObject here
-//                        return true;
-//                    Robot* rb = dynamic_cast<Robot*>((*it));
-//                    if (rb != nullptr)
-//                        //  Robot here
-//                        return true;
-//                    Boulder* bd = dynamic_cast<Boulder*>((*it));
-//                    if (bd != nullptr)
-//                        //  Boulder here
-//                        return true;
                     if ((*it)->blocksBullet())
                         return true;
                 }

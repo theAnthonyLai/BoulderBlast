@@ -5,12 +5,21 @@
 
 // Students:  Add code to this file (if you wish), Actor.h, StudentWorld.h, and StudentWorld.cpp
 
-/*
-bool Character::canMoveHere(int attemptX, int attemptY) {
-    //  TO_FIX
-    return true;
+Actor::Actor(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
+ : GraphObject(imageID, startX, startY, startDirection),
+    m_StudentWorld(myWorld),
+    m_dead(false)
+{
+    
 }
-*/
+
+Character::Character(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth, int startAmmo, Direction startDirection)
+ : Actor(imageID, startX, startY, myWorld, startDirection),
+    m_health(startHealth),
+    m_ammo(startAmmo)
+{
+    
+}
 
 void Character::decHealth(int decBy) {
     m_health -= decBy;
@@ -22,6 +31,33 @@ void Character::fire() {
     getWorld()->createBullet(this);
 }
 
+ImmovableObject::ImmovableObject(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Actor(imageID, startX, startY, myWorld, none)
+{
+    
+}
+
+Goodie::Goodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Actor(imageID, startX, startY, myWorld, none)
+{
+    
+}
+
+Robot::Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth)
+ : Character(imageID, startX, startY, myWorld, startHealth, 0, startDirection)
+{
+    m_ticksToMove = (28 - getWorld()->getLevel()) / 4;
+    if (m_ticksToMove < 3)
+        m_ticksToMove = 3;
+    m_tickCount = 1;
+}
+
+Player::Player(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Character(imageID, startX, startY, myWorld, 20, 20, right)   //  Player starts out facing right
+{
+    setVisible(true);
+}
+
 void Player::doSomething() {
     //  1
     //  do nothing if the player is dead
@@ -31,7 +67,6 @@ void Player::doSomething() {
     int keyPressed;
     if (getWorld()->getKey(keyPressed)) {
         //  user hit a key during this tick
-        
         int attemptX;
         int attemptY;
         StudentWorld* myWorld = getWorld();
@@ -42,7 +77,6 @@ void Player::doSomething() {
                 setDead();
                 break;
             case KEY_PRESS_SPACE:
-                //  TO_FIX
                 //  add firing codes here
                 if (getAmmo() > 0) {
                     fire();
@@ -52,8 +86,6 @@ void Player::doSomething() {
                 break;
             case KEY_PRESS_UP:
                 setDirection(up);
-                //  TO_FIX
-                //  moveTo()
                 attemptX = getX();
                 attemptY = getY() + 1;
                 if (!myWorld->isCharacterBlocked(this))
@@ -61,9 +93,6 @@ void Player::doSomething() {
                 break;
             case KEY_PRESS_DOWN:
                 setDirection(down);
-                //  TO_FIX
-                //  moveTo()
-                //  moveTo()
                 attemptX = getX();
                 attemptY = getY() - 1;
                 if (!myWorld->isCharacterBlocked(this))
@@ -71,9 +100,6 @@ void Player::doSomething() {
                 break;
             case KEY_PRESS_LEFT:
                 setDirection(left);
-                //  TO_FIX
-                //  moveTo()
-                //  moveTo()
                 attemptX = getX() - 1;
                 attemptY = getY();
                 if (!myWorld->isCharacterBlocked(this))
@@ -81,9 +107,6 @@ void Player::doSomething() {
                 break;
             case KEY_PRESS_RIGHT:
                 setDirection(right);
-                //  TO_FIX
-                //  moveTo()
-                //  moveTo()
                 attemptX = getX() + 1;
                 attemptY = getY();
                 if (!myWorld->isCharacterBlocked(this))
@@ -101,16 +124,11 @@ void Player::attacked() {
         getWorld()->playSound(SOUND_ROBOT_DIE);
 }
 
-Robot::Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth)
-: Character(imageID, startX, startY, myWorld, startHealth, 0, startDirection)
+SnarlBot::SnarlBot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
+ : Robot(imageID, startX, startY, myWorld, startDirection, 10)
 {
-    //  TO_FIX might need to take extra parameters
-    m_ticksToMove = (28 - getWorld()->getLevel()) / 4;
-    if (m_ticksToMove < 3)
-        m_ticksToMove = 3;
-    m_tickCount = 1;
+    setVisible(true);
 }
-
 
 void SnarlBot::doSomething()
 {
@@ -184,6 +202,14 @@ void SnarlBot::attacked()
         getWorld()->playSound(SOUND_ROBOT_DIE);
         getWorld()->increaseScore(100);
     }
+}
+
+KleptoBot::KleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld, int startHealth)
+ : Robot(imageID, startX, startY, myWorld, right, startHealth)
+{
+    resetDistanceBeforeTurning();
+    resetDistanceMoved();
+    m_stolenGoodie = nullptr;
 }
 
 bool KleptoBot::canKleptoMove()
@@ -262,9 +288,6 @@ void KleptoBot::doSomething()
         }
     }
     
-    //    d[0] = getRandomDirection();
-    //    d[1] = d[2] = d[3] = none;
-    
     //  try different direction
     for (int i = 0; i < 4; i++) {
         setDirection(d[i]);
@@ -274,22 +297,6 @@ void KleptoBot::doSomething()
     
     //  can't move
     setDirection(d[0]);
-    
-    
-    /*
-     while (d1 == none || d2 == none || d3 == none) {
-     if (canKleptoMove())
-     return;
-     Direction randomDir = none;
-     for(;;) {
-     randomDir = getRandomDirection();
-     if (d1 == none && randomDir != d) {
-     
-     }
-     }
-     
-     }*/
-
 }
 
 GraphObject::Direction KleptoBot::getRandomDirection() const
@@ -309,10 +316,14 @@ GraphObject::Direction KleptoBot::getRandomDirection() const
             return left;
             break;
         default:    //  should not reach here
-            //  TO_FIX  test??
-            //std::cout << "SH*T";
             return none;
     }
+}
+
+RegularKleptoBot::RegularKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : KleptoBot(imageID, startX, startY, myWorld, 5)
+{
+    setVisible(true);
 }
 
 void RegularKleptoBot::doSomething()
@@ -346,6 +357,12 @@ void RegularKleptoBot::attacked()
     }
 }
 
+AngryKleptoBot::AngryKleptoBot(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : KleptoBot(imageID, startX, startY, myWorld, 8)
+{
+    setVisible(true);
+}
+
 void AngryKleptoBot::doSomething()
 {
     if (isDead())
@@ -366,6 +383,7 @@ void AngryKleptoBot::doSomething()
         return;
     }
     
+    //  else (I don't fire)
     KleptoBot::doSomething();
 }
 
@@ -383,6 +401,19 @@ void AngryKleptoBot::attacked()
     }
 }
 
+Wall::Wall(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : ImmovableObject(imageID, startX, startY, myWorld)
+{
+    setVisible(true);
+}
+
+KleptoBotFactory::KleptoBotFactory(int imageID, int startX, int startY, StudentWorld* myWorld, char toMake)
+ : ImmovableObject(imageID, startX, startY, myWorld)
+{
+    setVisible(true);
+    m_product = toMake;
+}
+
 void KleptoBotFactory::doSomething()
 {
     int random = rand() % 50;
@@ -392,14 +423,37 @@ void KleptoBotFactory::doSomething()
     }
 }
 
+Hole::Hole(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Actor(imageID, startX, startY, myWorld, none)
+{
+    setVisible(true);
+}
+
+void Hole::doSomething()
+{
+    if (isDead())
+        return;
+    if (getWorld()->swallowBoulder(this))
+        setDead();
+}
+
+Boulder::Boulder(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Actor(imageID, startX, startY, myWorld, none),
+    m_health(10)
+{
+    setVisible(true);
+}
+
 void Boulder::attacked() {
     m_health -= 2;
     if (m_health == 0)
         setDead();
 }
 
-void Boulder::push(int x, int y) {
-    moveTo(x, y);
+Bullet::Bullet(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection)
+ : Actor(imageID, startX, startY, myWorld, startDirection)
+{
+    setVisible(true);
 }
 
 void Bullet::doSomething() {
@@ -442,12 +496,10 @@ void Bullet::doSomething() {
     
 }
 
-void Hole::doSomething()
+Exit::Exit(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Actor(imageID, startX, startY, myWorld, none)
 {
-    if (isDead())
-        return;
-    if (getWorld()->swallowBoulder(this))
-        setDead();
+    setVisible(false);
 }
 
 void Exit::doSomething()
@@ -462,6 +514,12 @@ void Exit::doSomething()
     }
 }
 
+Jewel::Jewel(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Actor(imageID, startX, startY, myWorld, none)
+{
+    setVisible(true);
+}
+
 void Jewel::doSomething()
 {
     if (isDead())
@@ -472,6 +530,12 @@ void Jewel::doSomething()
         getWorld()->decJewel();
         setDead();
     }
+}
+
+ExtraLifeGoodie::ExtraLifeGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Goodie(imageID, startX, startY, myWorld)
+{
+    setVisible(true);
 }
 
 void ExtraLifeGoodie::doSomething()
@@ -486,6 +550,12 @@ void ExtraLifeGoodie::doSomething()
     }
 }
 
+RestoreHealthGoodie::RestoreHealthGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Goodie(imageID, startX, startY, myWorld)
+{
+    setVisible(true);
+}
+
 void RestoreHealthGoodie::doSomething()
 {
     if (isDead())
@@ -496,6 +566,12 @@ void RestoreHealthGoodie::doSomething()
         getWorld()->restorePlayerHealth();
         setDead();
     }
+}
+
+AmmoGoodie::AmmoGoodie(int imageID, int startX, int startY, StudentWorld* myWorld)
+ : Goodie(imageID, startX, startY, myWorld)
+{
+    setVisible(true);
 }
 
 void AmmoGoodie::doSomething()
@@ -509,5 +585,3 @@ void AmmoGoodie::doSomething()
         setDead();
     }
 }
-
-
