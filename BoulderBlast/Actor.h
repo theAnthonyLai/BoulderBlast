@@ -20,7 +20,7 @@ public:
         
     }
     virtual ~Actor() {};
-    
+    virtual bool attacked() { return false; }
     //  Accessors
     bool isDead() const { return m_dead; };
     StudentWorld* getWorld() const { return m_StudentWorld; };
@@ -57,7 +57,7 @@ public:
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
-    virtual void attacked() = 0;    //  TO_FIX to be changed??
+    virtual bool attacked() = 0;    //  TO_FIX to be changed??
     void fire();
     void restoreHealth() { m_health = 20; }    //  only use by Player
     void decHealth(int decBy);   //  TO_FIX may change return type
@@ -80,6 +80,7 @@ public:
         
     }
     virtual void doSomething() = 0;
+    virtual bool attacked() { return true; }
     virtual bool blocksCharacter() { return true; }
     virtual ~ImmovableObject(){}
 private:
@@ -107,7 +108,7 @@ class Robot : public Character
 public:
     Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);   //  implement in cpp file (don't want to include header)
     virtual void doSomething() = 0;
-    virtual void attacked() = 0;    //  TO_FIX to be changed??
+    virtual bool attacked() = 0;    //  TO_FIX to be changed??
     int getTicksToMove() const { return m_ticksToMove; }
     int getTickCount() const { return m_tickCount; }
     void incTickCount() { m_tickCount++; }
@@ -128,7 +129,7 @@ public:
         setVisible(true);
     }
     virtual void doSomething();
-    virtual void attacked();
+    virtual bool attacked();
     virtual ~SnarlBot() {}
 };
 
@@ -143,7 +144,7 @@ public:
         m_stolenGoodie = nullptr;
     }
     virtual void doSomething();
-    virtual void attacked() = 0;
+    virtual bool attacked() = 0;
     bool canKleptoMove();
     int getDistanceBeforeTurning() const { return m_distanceBeforeTurning; }
     int getDistanceMoved() const { return m_distanceMoved; }
@@ -170,7 +171,7 @@ public:
         setVisible(true);
     }
     virtual void doSomething();
-    virtual void attacked();
+    virtual bool attacked();
     virtual ~RegularKleptoBot() {}
 };
 
@@ -183,7 +184,7 @@ public:
         setVisible(true);
     }
     virtual void doSomething();
-    virtual void attacked();
+    virtual bool attacked();
     virtual ~AngryKleptoBot() {}
 };
 
@@ -203,7 +204,7 @@ public:
     
     //  Mutators
     virtual void doSomething();
-    virtual void attacked();
+    virtual bool attacked();
     //void playerRestoreHealth() { restoreHealth(); }
 private:
     char m_productType;
@@ -261,7 +262,7 @@ public:
     }
     
     virtual ~Hole() {};
-    
+    virtual bool attacked() { return false; }
     virtual void doSomething();
     
 private:
@@ -283,7 +284,7 @@ public:
     
     virtual void doSomething() { return; }; //  Boulders do nothing
     
-    void attacked();
+    virtual bool attacked();
     void push(int x, int y);
     
 private:
@@ -303,7 +304,6 @@ public:
     virtual ~Bullet() {}    // TO_FIX ?? do nothing here?
     
     virtual void doSomething();
-    
     
 private:
     

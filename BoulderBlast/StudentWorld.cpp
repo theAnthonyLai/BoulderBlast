@@ -243,45 +243,48 @@ bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
         m_Player->attacked();
         return true;
     }
-    bool isFactoryHere = false;
+//    bool isFactoryHere = false;
     for (list<Actor*>::const_iterator it = m_Actors.begin(); it != m_Actors.end(); it++) {
         if ((*it)->getX() == searchX && (*it)->getY() == searchY) {
             //  found Actor here
             //  test what's here
-            KleptoBotFactory* fa = dynamic_cast<KleptoBotFactory*>((*it));
-            if (fa != nullptr)
-                //  is Factory
-                //  remember there's a Factory here
-                //  continue to check if there's a robot here
-                isFactoryHere = true;
-            Wall* wa = dynamic_cast<Wall*>((*it));
-            if (wa != nullptr) {
-                //  is Wall
-                //  doesn't "attack" but bullet dies
-                return true;
-            }
-            Robot* rb = dynamic_cast<Robot*>((*it));
-            if (rb != nullptr) {
-                //  is Robot
-                rb->attacked();
-                return true;
-            }
-            Boulder* bd = dynamic_cast<Boulder*>((*it));
-            if (bd != nullptr) {
-                //  is Boulder
-                bd->attacked();
-                return true;
-            }
+//            KleptoBotFactory* fa = dynamic_cast<KleptoBotFactory*>((*it));
+//            if (fa != nullptr)
+//                //  is Factory
+//                //  remember there's a Factory here
+//                //  continue to check if there's a robot here
+//                isFactoryHere = true;
+//            Wall* wa = dynamic_cast<Wall*>((*it));
+//            if (wa != nullptr) {
+//                //  is Wall
+//                //  doesn't "attack" but bullet dies
+//                return true;
+//            }
+//            Robot* rb = dynamic_cast<Robot*>((*it));
+//            if (rb != nullptr) {
+//                //  is Robot
+//                rb->attacked();
+//                return true;
+//            }
+//            Boulder* bd = dynamic_cast<Boulder*>((*it));
+//            if (bd != nullptr) {
+//                //  is Boulder
+//                bd->attacked();
+//                return true;
+//            }
             //  TO_FIX
             //  MORE??
+            if ((*it)->attacked())
+                return true;
+            
         }
         
     }
     
-    if (isFactoryHere)
-        //  occupy the same coordinates as Factory
-        //  but no robot here
-        return true;
+//    if (isFactoryHere)
+//        //  occupy the same coordinates as Factory
+//        //  but no robot here
+//        return true;
     
     //  continue moving 
     return false;
@@ -434,11 +437,11 @@ bool StudentWorld::doesFactoryProduce(KleptoBotFactory* factory)
     
     if (KleptoCount < 3) {
         if (factory->getProduct() == 'r') {
-            m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, factory->getX(), factory->getY(), this));
+            m_Actors.push_front(new RegularKleptoBot(IID_KLEPTOBOT, factory->getX(), factory->getY(), this));
             return true;
         } else {
             //  AngryKleptoBot Factory
-            m_Actors.push_back(new AngryKleptoBot(IID_KLEPTOBOT, factory->getX(), factory->getY(), this));
+            m_Actors.push_front(new AngryKleptoBot(IID_KLEPTOBOT, factory->getX(), factory->getY(), this));
             return true;
         }
     }
