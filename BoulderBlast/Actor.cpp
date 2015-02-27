@@ -209,6 +209,10 @@ bool KleptoBot::canKleptoMove()
                 break;
         }
         moveTo(attemptX, attemptY);
+        if (getStolenGoodie() != nullptr)
+            //  this Klepto has a Goodie
+            //  Goodie needs to move along
+            getStolenGoodie()->moveTo(attemptX, attemptY);
         incDistanceMoved();
         return true;
     }
@@ -218,6 +222,74 @@ bool KleptoBot::canKleptoMove()
 void KleptoBot::resetDistanceBeforeTurning()
 {
     distanceBeforeTurning = (rand() % 6) + 1;
+}
+
+void KleptoBot::doSomething()
+{
+    //  let's try stealing a Goodie
+    int random = rand() % 10;
+    if (getStolenGoodie() == nullptr && random == MY_LUCKY_NUMBER) {
+        //  I don't have a Goodie and I'm lucky!!
+        Goodie* gdToPickUp = getWorld()->isGoodieHere(this);
+        if (gdToPickUp != nullptr) {    //  yes I get to pick up a Goodie!
+            setStolenGoodie(gdToPickUp);
+            gdToPickUp->setVisible(false);
+            getWorld()->playSound(SOUND_ROBOT_MUNCH);
+            return;
+        }
+    }
+    
+    //  let's try moving in this direction
+    if (canKleptoMove())
+        return;
+    
+    //  alright we need a different direction
+    resetDistanceBeforeTurning();
+    resetDistanceMoved();
+    
+    //  create random directions array
+    Direction d[4] = { none, none, none, none };
+    for (int i = 0; i < 4; i++) {
+        while (d[i] == none) {
+            Direction dir = getRandomDirection();
+            bool isUnique = true;
+            for (int j = 0; j < i; j++) {
+                if (dir == d[j])
+                    isUnique = false;
+            }
+            if (isUnique)
+                d[i] = dir;
+        }
+    }
+    
+    //    d[0] = getRandomDirection();
+    //    d[1] = d[2] = d[3] = none;
+    
+    //  try different direction
+    for (int i = 0; i < 4; i++) {
+        setDirection(d[i]);
+        if (canKleptoMove())
+            return;
+    }
+    
+    //  can't move
+    setDirection(d[0]);
+    
+    
+    /*
+     while (d1 == none || d2 == none || d3 == none) {
+     if (canKleptoMove())
+     return;
+     Direction randomDir = none;
+     for(;;) {
+     randomDir = getRandomDirection();
+     if (d1 == none && randomDir != d) {
+     
+     }
+     }
+     
+     }*/
+
 }
 
 GraphObject::Direction KleptoBot::getRandomDirection() const
@@ -256,78 +328,23 @@ void RegularKleptoBot::doSomething()
     
     //  else do something
     tickCountReset();
-    
-    //  let's try stealing a Goodie
-    int random = rand() % 10;
-    if (getStolenGoodie() == nullptr && random == MY_LUCKY_NUMBER) {
-        //  I don't have a Goodie and I'm lucky!!
-        Goodie* gdToPickUp = getWorld()->isGoodieHere(this);
-        if (gdToPickUp != nullptr) {    //  yes I get to pick up a Goodie!
-            setStolenGoodie(gdToPickUp);
-            gdToPickUp->setVisible(false);
-            getWorld()->playSound(SOUND_ROBOT_MUNCH);
-            return;
-        }
-    }
-    
-    //  let's try moving in this direction
-    if (canKleptoMove())
-        return;
-    
-    //  alright we need a different direction
-    resetDistanceBeforeTurning();
-    resetDistanceMoved();
-    
-    //  create random directions array
-    Direction d[4] = { none, none, none, none };
-    for (int i = 0; i < 4; i++) {
-        while (d[i] == none) {
-            Direction dir = getRandomDirection();
-            bool isUnique = true;
-            for (int j = 0; j < i; j++) {
-                if (dir == d[j])
-                    isUnique = false;
-            }
-            if (isUnique)
-                d[i] = dir;
-        }
-    }
-    
-//    d[0] = getRandomDirection();
-//    d[1] = d[2] = d[3] = none;
-    
-    //  try different direction
-    for (int i = 0; i < 4; i++) {
-        setDirection(d[i]);
-        if (canKleptoMove())
-            return;
-    }
-    
-    //  can't move
-    setDirection(d[0]);
-    
-    
-    /*
-    while (d1 == none || d2 == none || d3 == none) {
-        if (canKleptoMove())
-            return;
-        Direction randomDir = none;
-        for(;;) {
-            randomDir = getRandomDirection();
-            if (d1 == none && randomDir != d) {
-                
-            }
-        }
-        
-    }*/
-    
-    
+    KleptoBot::doSomething();
     
 }
 
 void RegularKleptoBot::attacked()
 {
-    
+    decHealth(2);
+    if (!isDead())
+        getWorld()->playSound(SOUND_ROBOT_IMPACT);
+    else {
+        getWorld()->playSound(SOUND_ROBOT_DIE);
+        if (getStolenGoodie() != nullptr)
+            //  this Klepto has a Goodie
+            getStolenGoodie()->setVisible(true);
+        getWorld()->increaseScore(10);
+    }
+
 }
 
 void Boulder::attacked() {

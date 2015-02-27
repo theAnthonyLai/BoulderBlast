@@ -141,7 +141,7 @@ public:
         resetDistanceMoved();
         stolenGoodie = nullptr;
     }
-    virtual void doSomething() = 0;
+    virtual void doSomething();
     virtual void attacked() = 0;
     bool canKleptoMove();
     int getDistanceBeforeTurning() const { return distanceBeforeTurning; }
