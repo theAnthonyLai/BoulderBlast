@@ -105,10 +105,10 @@ Robot::Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Directi
 : Character(imageID, startX, startY, myWorld, startHealth, 0, startDirection)
 {
     //  TO_FIX might need to take extra parameters
-    ticksToMove = (28 - getWorld()->getLevel()) / 4;
-    if (ticksToMove < 3)
-        ticksToMove = 3;
-    tickCount = 1;
+    m_ticksToMove = (28 - getWorld()->getLevel()) / 4;
+    if (m_ticksToMove < 3)
+        m_ticksToMove = 3;
+    m_tickCount = 1;
 }
 
 
@@ -221,7 +221,7 @@ bool KleptoBot::canKleptoMove()
 
 void KleptoBot::resetDistanceBeforeTurning()
 {
-    distanceBeforeTurning = (rand() % 6) + 1;
+    m_distanceBeforeTurning = (rand() % 6) + 1;
 }
 
 void KleptoBot::doSomething()

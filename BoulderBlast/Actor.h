@@ -107,15 +107,15 @@ public:
     Robot(int imageID, int startX, int startY, StudentWorld* myWorld, Direction startDirection, int startHealth);   //  implement in cpp file (don't want to include header)
     virtual void doSomething() = 0;
     virtual void attacked() = 0;    //  TO_FIX to be changed??
-    int getTicksToMove() const { return ticksToMove; }
-    int getTickCount() const { return tickCount; }
-    void incTickCount() { tickCount++; }
-    void tickCountReset() { tickCount = 1; }
+    int getTicksToMove() const { return m_ticksToMove; }
+    int getTickCount() const { return m_tickCount; }
+    void incTickCount() { m_tickCount++; }
+    void tickCountReset() { m_tickCount = 1; }
     virtual ~Robot(){}
     
 private:
-    int ticksToMove;
-    int tickCount;
+    int m_ticksToMove;
+    int m_tickCount;
 };
 
 class SnarlBot : public Robot
@@ -139,25 +139,25 @@ public:
     {
         resetDistanceBeforeTurning();
         resetDistanceMoved();
-        stolenGoodie = nullptr;
+        m_stolenGoodie = nullptr;
     }
     virtual void doSomething();
     virtual void attacked() = 0;
     bool canKleptoMove();
-    int getDistanceBeforeTurning() const { return distanceBeforeTurning; }
-    int getDistanceMoved() const { return distanceMoved; }
+    int getDistanceBeforeTurning() const { return m_distanceBeforeTurning; }
+    int getDistanceMoved() const { return m_distanceMoved; }
     void resetDistanceBeforeTurning();
-    void resetDistanceMoved() { distanceMoved = 0; };
-    void incDistanceMoved() { distanceMoved++; }
-    void setStolenGoodie(Goodie* gd) { stolenGoodie = gd; }
-    Goodie* getStolenGoodie() const { return stolenGoodie; }
+    void resetDistanceMoved() { m_distanceMoved = 0; };
+    void incDistanceMoved() { m_distanceMoved++; }
+    void setStolenGoodie(Goodie* gd) { m_stolenGoodie = gd; }
+    Goodie* getStolenGoodie() const { return m_stolenGoodie; }
     Direction getRandomDirection() const;
     virtual ~KleptoBot() {}
     
 private:
-    int distanceBeforeTurning;
-    int distanceMoved;
-    Goodie* stolenGoodie;
+    int m_distanceBeforeTurning;
+    int m_distanceMoved;
+    Goodie* m_stolenGoodie;
 };
 
 class RegularKleptoBot : public KleptoBot
@@ -205,7 +205,7 @@ public:
     virtual void attacked();
     //void playerRestoreHealth() { restoreHealth(); }
 private:
-
+    char m_productType;
 
 };
 
