@@ -33,7 +33,7 @@ static const double VISIBLE_MIN_Z = -20;
 
 static const double FONT_SCALEDOWN = 760.0;
 
-static const int MS_PER_FRAME = 20;
+static const int MS_PER_FRAME = 40;
 
 static const double SCORE_Y = 3.8;
 static const double SCORE_Z = -10;

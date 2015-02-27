@@ -24,12 +24,11 @@ public:
     //  Accessors
     bool isDead() const { return m_dead; };
     StudentWorld* getWorld() const { return m_StudentWorld; };
+    virtual bool blocksCharacter() { return false; }
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Actor object should not be created
-    void setDead() {
-        m_dead = true;
-    };
+    void setDead() { m_dead = true; }
     
 private:
     StudentWorld* m_StudentWorld;
@@ -54,6 +53,7 @@ public:
     //  Accessors
     int getHealth() const { return m_health; }
     int getAmmo() const { return m_ammo; }
+    virtual bool blocksCharacter() { return true; }
     
     //  Mutators
     virtual void doSomething() = 0; //  pure virtual: Character object should not be created
@@ -80,6 +80,7 @@ public:
         
     }
     virtual void doSomething() = 0;
+    virtual bool blocksCharacter() { return true; }
     virtual ~ImmovableObject(){}
 private:
     

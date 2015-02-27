@@ -86,6 +86,10 @@ int StudentWorld::init()
     
 //    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 11, this));
 //    m_Actors.push_back(new AngryKleptoBot(IID_KLEPTOBOT, 13, 8, this));
+//    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 4, this));
+//    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 1, 3, this));
+//    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 2, 3, this));
+//    m_Actors.push_back(new RegularKleptoBot(IID_KLEPTOBOT, 2, 4, this));
     
     
     
@@ -203,15 +207,6 @@ bool StudentWorld::isCharacterBlocked(Character* characterToCheck) const
         if ((*it)->getX() == attemptX && (*it)->getY() == attemptY) {
             //  found Actor here
             //  test what's here
-            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
-            if (im != nullptr)
-                //  is ImmovableObject
-                return true;
-            Robot* rb = dynamic_cast<Robot*>((*it));
-            if (rb != nullptr)
-                //  is Robot
-                return true;
-
             Boulder* bd = dynamic_cast<Boulder*>((*it));
             if (bd != nullptr) {
                 //  is Boulder
@@ -225,6 +220,17 @@ bool StudentWorld::isCharacterBlocked(Character* characterToCheck) const
                     //  Robot can't move Boulder
                     return true;
             }
+//            ImmovableObject* im = dynamic_cast<ImmovableObject*>((*it));
+//            if (im != nullptr)
+//                //  is ImmovableObject
+//                return true;
+//            Robot* rb = dynamic_cast<Robot*>((*it));
+//            if (rb != nullptr)
+//                //  is Robot
+//                return true;
+            if ((*it)->blocksCharacter())
+                return true;
+
         }
     }
             
@@ -591,7 +597,7 @@ void StudentWorld::displayGameText()
     int score = getScore();
     int level = getLevel();
     int livesLeft = getLives();
-    int healthLeft = (static_cast<double>(m_Player->getHealth()) / 20 * 100);    //  TO_FIX ??
+    int healthLeft = (m_Player->getHealth()) * 5;
     int ammoLeft = m_Player->getAmmo();
     int bonusLeft = m_Bonus;
     
