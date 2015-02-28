@@ -31,7 +31,7 @@ public:
     
     bool isCharacterBlocked(Character* characterToCheck) const;
     bool doesBulletAttack(int searchX, int searchY) const;
-    void createBullet(Actor* firedActor);
+    void createBullet(Character* firedCharacter);
     bool swallowBoulder(Actor* holeToCheck);
     bool isPlayerHere(Actor* actorToCheck) const;
     Goodie* isGoodieHere(Actor* actorToCheck) const;

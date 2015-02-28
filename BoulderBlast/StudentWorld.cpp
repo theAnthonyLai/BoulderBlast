@@ -244,10 +244,10 @@ bool StudentWorld::doesBulletAttack(int searchX, int searchY) const
     return false;
 }
 
-void StudentWorld::createBullet(Actor* firedActor) {
-    int attemptX = firedActor->getX();
-    int attemptY = firedActor->getY();
-    GraphObject::Direction myDir = firedActor->getDirection();
+void StudentWorld::createBullet(Character* firedCharacter) {
+    int attemptX = firedCharacter->getX();
+    int attemptY = firedCharacter->getY();
+    GraphObject::Direction myDir = firedCharacter->getDirection();
     
     switch (myDir) {
         case GraphObject::up:
