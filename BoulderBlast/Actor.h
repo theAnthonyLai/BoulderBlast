@@ -138,9 +138,9 @@ public:
     void incDistanceMoved() { m_distanceMoved++; }
     void setStolenGoodie(Goodie* gd) { m_stolenGoodie = gd; }
     bool canKleptoMove();
-    Direction getRandomDirection() const;
     
 private:
+    Direction getRandomDirection() const;
     int m_distanceBeforeTurning;
     int m_distanceMoved;
     Goodie* m_stolenGoodie;
